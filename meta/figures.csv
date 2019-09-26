@@ -1,0 +1,14 @@
+imagefile,label,caption,loc,order,width
+fig_trends.pdf,fig_trends,"Trends in Punitiveness, Anxiety, and Mistrust",main,1,6in
+fig_avgs.pdf,fig_avgs,"Proportion of Poll Respondents Giving Punitive, Anxious or Mistrustful Answers",main,2,4.5in
+fig_majorvotes.pdf,fig_majorvotes,"Punitive Voting in the Federal House of Representatives, 1968 to 2015",main,3,6in
+fig_majorvotes_trends.pdf,fig_majorvotes_trends,"Punitive Voting in the Federal House of Representatives, Trends",main,4,6in
+fig_marginals.pdf,fig_marginals,Effect of Key Demographics by Race,main,5,6in
+fig_redistrict.png,fig_redistrict,Black Political Representation Around Redistricting,main,6,6in
+fig_prefests.pdf,fig_prefests,Estimates from Regressions on State-Year Panel,main,7,6in
+fig_map.png,fig_map,Preferences Around Criminal Justice Reform,main,8,6in
+fig_diffs.pdf,fig_diffs,"Average White-Black Difference in Proportion Punitive, Anxious or Mistrustful",app,9,4.5in
+fig_coverage.pdf,fig_coverage,Questions and Coverage Used in Analysis,app,10,6in
+fig_94votes.pdf,fig_94votes,Punitive Voting in the Violent Crime Control and Law Enforcement Act of 1994,app,11,6in
+fig_unitroots.pdf,fig_unitroots,Unit Root Tests on State-Year Panel,app,12,6in
+fig_robests.pdf,fig_robests,Robustness Checks for Regressions on State-Year Panel,app,13,6in

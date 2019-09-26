@@ -1,0 +1,9 @@
+mname,propername,order
+pref,Preferred,1
+5year,Five-Year,3
+spending,Spending,4
+re,Random-Effects,5
+pooled,Pooled,6
+divtrend,DivXYear Trend,7
+regtrend,RegXYear Trend,8
+urtransform,Unitroots,9

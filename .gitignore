@@ -1,0 +1,11 @@
+#folders
+code/
+code, voting/
+output/
+data/
+files/*.RDS
+files/*.csv
+files/!01R2_prepped.RData
+
+#and the user file
+.Rproj.user

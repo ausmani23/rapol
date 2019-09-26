@@ -1,0 +1,19 @@
+facet,y,order
+dd,Aggregation,
+dd,Bootstrap,
+dd,First Differences,
+dd,Division X Time,
+dd,FEs Only,2
+dd,Lag DV,
+dd,RD X Districts,
+dd,Region X Time,
+dd,Bivariate,1
+dd,Spending,
+reg,Five-Year,
+reg,Division X Time,
+reg,Enns,
+reg,Bivariate,
+reg,Pooled,
+reg,Random-Effects,
+reg,Region X Time,
+reg,Spending,

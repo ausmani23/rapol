@@ -1,0 +1,9 @@
+"mname","sampname","dv","dimension","fes","res","race","sample","N","N.resp","N.questions","N.polls","aic","bic","loglik","deviance","df.resid","aic.rank","bic.rank","pref"
+"aff.all.pref.full.race.allpolls","all.allpolls","aff","all","pref","full","race","allpolls",458937,259348,36,171,287617.077929706,287710.437797419,-143799.538964853,287599.077929706,236400,1,1,TRUE
+"aff.all.pref.pref.race.allpolls","all.allpolls","aff","all","pref","pref","race","allpolls",458937,259348,36,171,552442.119032642,552541.449046665,-276212.059516321,552424.119032642,458928,2,2,FALSE
+"aff.anxiety.pref.full.race.allpolls","anxiety.allpolls","aff","anxiety","pref","full","race","allpolls",116471,110127,9,60,105186.656009574,105272.801597254,-52584.3280047872,105168.656009574,106048,1,1,TRUE
+"aff.anxiety.pref.pref.race.allpolls","anxiety.allpolls","aff","anxiety","pref","pref","race","allpolls",116471,110127,9,60,152268.528915769,152355.517494115,-76125.2644578847,152250.528915769,116462,2,2,FALSE
+"aff.mistrust.pref.full.race.allpolls","mistrust.allpolls","aff","mistrust","pref","full","race","allpolls",106057,71795,11,56,285309.520490781,285465.120270304,-142639.760245391,285279.520490781,236394,1,1,TRUE
+"aff.mistrust.pref.pref.race.allpolls","mistrust.allpolls","aff","mistrust","pref","pref","race","allpolls",106057,71795,11,56,544247.715563244,544413.265586614,-272108.857781622,544217.715563244,458922,2,2,FALSE
+"aff.punitive.pref.full.race.allpolls","punitive.allpolls","aff","punitive","pref","full","race","allpolls",236409,153844,16,99,104516.693170602,104660.269150068,-52243.3465853011,104486.693170602,106042,1,1,TRUE
+"aff.punitive.pref.pref.race.allpolls","punitive.allpolls","aff","punitive","pref","pref","race","allpolls",236409,153844,16,99,151540.950983101,151685.931947011,-75755.4754915507,151510.950983101,116456,2,2,FALSE
