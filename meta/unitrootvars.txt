@@ -1,7 +1,0 @@
-incrt_t_jur
-lnpolicesp_pcap
-L.lnrealinc_pc
-L.growthrate
-L.gini
-L.txtot_pc
-L.all.both
