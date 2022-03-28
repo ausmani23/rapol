@@ -1,3 +1,0 @@
-"mname","sampname","dv","dimension","fes","res","race","sample","N","N.resp","N.questions","N.polls","aic","bic","loglik","deviance","df.resid","aic.rank","bic.rank","pref"
-"aff.anxiety.pref.full.race.allpolls","anxiety.allpolls","aff","anxiety","pref","full","race","allpolls",116471,110127,9,60,285016.414787401,285161.641248289,-142494.207393701,284988.414787401,236395,1,1,TRUE
-"aff.punitive.pref.full.race.allpolls","punitive.allpolls","aff","punitive","pref","full","race","allpolls",236409,153844,16,99,151478.056082241,151613.371648557,-75725.0280411206,151450.056082241,116457,1,1,TRUE

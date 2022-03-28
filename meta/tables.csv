@@ -1,5 +1,0 @@
-label,caption,divider,left,right,size,loc,order
-tab_descriptive,Descriptive Statistics,1,1,,,main,NA
-tab_lrests,"Results from Panel Regressions, Long-Run Estimates",1,1,,footnotesize,main,2
-tab_srests,"Results from Panel Regressions, Short-Run Estimates",1,1,,footnotesize,app,3
-tab_qtable,Question Details,1,1,,,,NA

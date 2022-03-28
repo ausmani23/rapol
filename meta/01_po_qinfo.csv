@@ -1,0 +1,43 @@
+"order","dimension","src","question","shortname","alt","deathpen","pro","con","neutral","other","note"
+1,"punitive","ABC","deathpen.abc","Favor Death Penalty (ABC)","F","T","Favor Death Penalty","Oppose Death Penalty","Don't Know, No Opinion, It Depends (Vol.)","NA",
+2,"punitive","ABC","preferdp.abc","Prefer Death Penalty (ABC)","T","T","Prefer Death Penalty","Prefer Life in Prison","Don't Know, No Opinion","NA/Refused",
+3,"mistrust","ANES","police.anes","Cold Toward Police (ANES)","NA","NA","0 to 49","51 to 100","50","NA",
+4,"punitive","ANES","useforce.anes","Use Force (ANES)","T","F","5 to 7","1 to 3","4","NA",
+5,"punitive","ANES","raccused.anes","Stop Crimes Regardless (ANES)","T","F","5 to 7","1 to 3","4","NA",
+6,"anxiety","ANES","spendmore.anes","Spend More on Crime (ANES)","NA","NA","Increased","Decreased or Cut Entirely","Same, Don't Know",,"As with Death Pen Q's, treat DK as a neutral response."
+7,"anxiety","CBS","worryvictim.cbs","Worry About Crime (CBS)","NA","NA","A lot of the time, Some of the time","Never, Hardly ever","NA/Don't Know",,"NA/DK counted as neutral, as only neutral option."
+8,"punitive","Gallup","moreimppunish.gallup","More Important to Punish (Gallup)","T","F","Punish Them","Get Started Right","No Opinion","NA",
+9,"punitive","Gallup","deathpen.gallup","Favor Death Penalty (Gallup)","F","T","Favor","Oppose","No Opinion, Don't Know","NA",
+10,"mistrust","Gallup","policerespect.gallup","No Respect for Police (Gallup)","NA","NA","Hardly Any","A great deal","Some","Don't Know, Refused","DK considered Other rather than Neutral, b/c lumped in with Refused and there is a different clearly neutral option."
+11,"punitive","Gallup","courtsharsh.gallup","Courts Not Harsh Enough (Gallup)","F","F","Not Harsh Enough","Too Harsh","About Right, Don't Know, No Opinion","NA",
+12,"mistrust","Gallup","policebrutality.gallup","Police Have Been Brutal (Gallup)","NA","NA","Yes","No","Don't Know/Refused","NA","I had to consider Refused a neutral response, because DK/Ref is the only clearly neutral response possible."
+13,"punitive","Gallup","deterrent.gallup","Death Penalty Deters (Gallup)","F","T","It Does Deter","It Doesn't Deter","Don't Know, No Opinion","NA",
+14,"punitive","Gallup","preferdp.gallup","Prefer Death Penalty (Gallup)","T","T","Prefer Death Penalty","Prefer Life Without Parole","Neither, Either/It Depends, DK/Refused","NA","I considered DK/Refused a neutral response, because in some years it was the only neutral option."
+15,"mistrust","Gallup","courtsconvconf.gallup","No Confidence in Conviction (Gallup)","NA","NA","None, Not Much","Great Deal, Quite A Lot","Don't Know","NA",
+16,"mistrust","Gallup","policeprotect.gallup","No Confidence in Police Protection (Gallup)","NA","NA","None At All, Not Very Much","A Great Deal, Quite A Lot","Don't Know/Refused","NA",
+17,"punitive","Gallup","moreprisons.gallup","More Prisons and Police (Gallup)","T","F","Improving Law Enforcement","Social and Economic Problems","Don't Know/Refused, Both (Vol.), Neither (Vol.)","NA","Both and Neither only options in 1992 polls"
+18,"mistrust","Gallup","cjustconfidence.gallup","No Confidence in Criminal Justice (Gallup)","NA","NA","Some, Very Little, None (Vol.)","A Great Deal, Quite A Lot","Don't Know/Refused","NA","Some considered a mistrustful response because None is volunteered, not given. In later years, Refused is distinct from DK, but in early years it is not. So considered together. This decision affects very few respondents in total."
+19,"mistrust","Gallup","policeconfidence.gallup","No Confidence in Police (Gallup)","NA","NA","Some, Very Little, None (Vol.)","A Great Deal, Quite A Lot","Don't Know/Refused","NA","Same as cjustconfidence"
+20,"punitive","Gallup","crimebill.gallup","Favor Crime Bill (Gallup)","F","F","Favor","Oppose","Don't Know/Refused","NA",
+21,"mistrust","Gallup","policehonesty.gallup","Police Not Honest (Gallup)","NA","NA","Low, Very Low","High, Very High","Average, Don't Know/Refused","NA","All years ‘Refused’ is a separate option. But to harmonize with all other Gallup, I count as neutral."
+22,"punitive","GSS","deathpen.gss","Favor Death Penalty (GSS)","F","T","Favor","Opposed","Don't Know","NA",
+23,"anxiety","GSS","natcrime.gss","Too Little on Halting Rising Crime (GSS)","NA","NA","Too Little Money","Too Much Money","About Right, Don't Know","NA",
+24,"anxiety","GSS","natcrimy.gss","Too Little on Law Enforcement (GSS)","NA","NA","Too Little Money","Too Much Money","About Right, Don't Know","NA",
+25,"anxiety","GSS","natcrimz.gss","Too Little on Reducing Crime (GSS)","NA","NA","Too Little Money","Too Much Money","About Right, Don't Know","NA",
+26,"punitive","GSS","courtsharsh.gss","Courts Not Harsh Enough (GSS)","F","F","Not Harsh Enough","Too Harsh","About Right, Don't Know","NA",
+27,"anxiety","GSS","sppolice.gss","Spend More on Police (GSS)","NA","NA","Spend More, Spend Much More","Spend Less, Spend Much Less","Spend Same, Can't Choose","NA",
+28,"mistrust","GSS","cjustconfidence.gss","No Confidence in Courts (GSS)","NA","NA","Very Little Confidence, No Confidence At All","Complete Confidence, A Great Deal of Confidence","Some Confidence, Don't Know","NA",
+29,"mistrust","NBC","policehonesty.nbc","Police Not Honest (NBC)","NA","NA","Low, Very Low","High, Very High","Average, Don't Know/Not Sure","NA","DK counted as a neutral answer"
+30,"punitive","LAT","canrehab.lat","Criminals Cannot Rehabilitate (LAT)","T","F","A Few, None","Most, Some","Not Sure","Refused","Refused is a distict answer from Not Sure"
+31,"punitive","LAT","rehabilitate.lat","Put Criminals Away (LAT)","T","F","Punish","Rehabilitate","Neither/Other, Both, Not Sure","Refused","Refused is a distinct answer from the others, which express ambivalence."
+32,"punitive","LAT","moreprisons.lat","More Prisons and Police (LAT)","T","F","More Prisons, Police and Judges","Attack Social and Economic Problems","Not Sure","Refused",
+33,"anxiety","Roper","crimespend.roper","Spend More Halting Crime (Roper)","NA","NA","Too Little","Too Much","About Right","NA",
+34,"mistrust","Roper","confidence.roper","No Confidence in Legal System (Roper)","NA","NA","Not at all confident","Very confident","Only fairly confident, Don't Know","NA",
+35,"punitive","Roper","deathpen.roper","Favor Death Penalty (Roper)","F","T","Favor","Opposed to","Mixed Feelings, Don't Know","NA",
+36,"punitive","Roper","harsher.roper","Favor Harsher Sentencing (Roper)","F","F","Favor","Opposed to","Mixed Feelings, Don't Know","NA",
+37,"punitive","Time","deathpen.time","Favor Death Penalty (Time)","F","T","Favor","Oppose","Not Sure",,
+38,"anxiety","Time","worryvictim.time","Worry About Crime (Time)","NA","NA","Yes","No","Not Sure",,
+39,"anxiety","Time","adeqprotect.time","Feel Inadequately Protected (Time)","NA","NA","Yes","No","Not Sure",,
+,"punitive",,"punitive.sum","Punitiveness    ",,,,,,,
+,"anxiety",,"anxiety.sum","Anxiety    ",,,,,,,
+,"mistrust",,"mistrust.sum","Mistrust    ",,,,,,,

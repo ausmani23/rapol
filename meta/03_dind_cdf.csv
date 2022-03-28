@@ -1,0 +1,52 @@
+,state_alpha2,state_gallup,state_gallup.old,state_fips,statename,region,division,state_abc,state_roper
+1,AK,85,75,2,Alaska,West,9,2,-99
+2,AL,58,58,1,Alabama,South,6,1,1
+3,AR,61,81,5,Arkansas,South,7,4,3
+4,AZ,72,62,4,Arizona,West,8,3,2
+5,CA,81,71,6,California,West,9,5,4
+6,CO,73,63,8,Colorado,West,8,6,5
+7,CT,16,16,9,Connecticut,Northeast,1,7,6
+8,DC,27,27,11,District of Columbia,South,5,9,8
+9,DE,25,25,10,Delaware,South,5,8,7
+11,FL,55,55,12,Florida,South,5,10,9
+12,GA,54,54,13,Georgia,South,5,11,10
+13,HI,84,74,15,Hawaii,West,9,12,-99
+14,IA,43,43,19,Iowa,Midwest,4,16,14
+15,ID,74,64,16,Idaho,West,8,13,11
+16,IL,34,34,17,Illinois,Midwest,3,14,12
+17,IN,33,33,18,Indiana,Midwest,3,15,13
+18,KS,48,48,20,Kansas,Midwest,4,17,15
+19,KY,56,56,21,Kentucky,South,6,18,16
+20,LA,62,82,22,Louisiana,South,7,19,17
+21,MA,14,14,25,Massachusetts,Northeast,1,22,20
+22,MD,24,24,24,Maryland,South,5,21,19
+23,ME,11,11,23,Maine,Northeast,1,20,18
+24,MI,32,32,26,Michigan,Midwest,3,23,21
+25,MN,42,42,27,Minnesota,Midwest,4,24,22
+26,MO,44,44,29,Missouri,Midwest,4,26,24
+27,MS,59,59,28,Mississippi,South,6,25,23
+28,MT,71,61,30,Montana,West,8,27,25
+29,NC,52,52,37,North Carolina,South,5,34,32
+30,ND,45,45,38,North Dakota,Midwest,4,35,33
+31,NE,47,47,31,Nebraska,Midwest,4,28,26
+32,NH,12,12,33,New Hampshire,Northeast,1,30,28
+33,NJ,22,22,34,New Jersey,Northeast,2,31,28
+34,NM,78,68,35,New Mexico,West,8,32,30
+35,NV,77,67,32,Nevada,West,8,29,27
+36,NY,21,21,36,New York,Northeast,2,33,31
+37,OH,31,31,39,Ohio,Midwest,3,36,34
+38,OK,63,83,40,Oklahoma,South,7,37,35
+39,OR,82,72,41,Oregon,West,9,38,36
+40,PA,23,23,42,Pennsylvania,Northeast,2,39,37
+41,RI,15,15,44,Rhode Island,Northeast,1,40,38
+42,SC,53,53,45,South Carolina,South,5,41,39
+43,SD,46,46,46,South Dakota,Midwest,4,42,40
+45,TN,57,57,47,Tennessee,South,6,43,41
+46,TX,64,84,48,Texas,South,7,44,42
+48,UT,76,66,49,Utah,West,8,45,43
+49,VA,51,51,51,Virginia,South,5,47,45
+50,VT,13,13,50,Vermont,Northeast,1,46,44
+51,WA,83,73,53,Washington,West,9,48,46
+52,WI,41,41,55,Wisconsin,Midwest,3,50,48
+53,WV,26,26,54,West Virginia,South,5,49,47
+54,WY,75,65,56,Wyoming,West,8,51,49

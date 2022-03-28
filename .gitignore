@@ -1,11 +1,15 @@
 #folders
-code/
-code, voting/
 output/
 data/
-files/*.RDS
-files/*.csv
-files/!01R2_prepped.RData
+files/
+archived/
+draft/
+.dropbox
+
+#random files
+XX*
+00_runall.R
+readme.html
 
 #and the user file
 .Rproj.user
