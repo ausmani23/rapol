@@ -289,7 +289,8 @@ g.tmp<-ggplot(
   facet_wrap(
     ~ approach,
     ncol=1
-  ) 
+  ) + 
+  theme_bw()
 
 setwd(outputdir)
 tmpname<-"fig_dind_prefests.png"

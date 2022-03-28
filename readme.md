@@ -4,6 +4,10 @@ This repository contains replication code and materials for 'The Racial Politics
 
 ## Folder and File Structure
 
++ 'code' contains three subfolders (described below) and:
+
+    + miscgraphs.R - Creates misc. graphs for the paper *[fig_citerate.png]
+
 + 'code/01_public opinion' contains the code to generate the figures that correspond to Part 4.1 of the paper, 'Public Opinion'.
 
     + 01_group.R - Combines constituent polling datasets
