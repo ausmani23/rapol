@@ -78,26 +78,168 @@ unique(mvotesdf$congress_rollnumber[!mvotesdf$handcoded]) %>% length
 unique(mvotesdf$congress_rollnumber[mvotesdf$handcoded]) %>% length
 #953 new; 45 handcoded
 
+#fix groups for display clarity
+tmp<-mvotesdf$group%in%c('Republicans','Democrats')
+mvotesdf$group[tmp]<-paste0('Non-CBC ',mvotesdf$group[tmp])
+
+#########################################################
+#########################################################
+
+#SUMMARIZE BY PRESIDENT
+
+#merge info about presidents into this, for display
+require(rvest)
+require(lubridate)
+tmpurl <- "https://history.house.gov/Institution/Presidents-Coinciding/Presidents-Coinciding/"
+thishtml <- read_html(tmpurl)
+tmpdf<-thishtml %>%
+  html_nodes('.manual-table-not-sortable') %>%
+  html_table()
+tmpdf<-tmpdf[[1]]
+names(tmpdf)<-tolower(names(tmpdf))
+names(tmpdf)<-c('number','president','vp','years','congresses')
+tmpdf$number<-na.locf(tmpdf$number)
+tmpdf$startdate<-str_extract(
+  tmpdf$years,
+  '.*?\\–'
+) %>% str_replace("\\–","")
+tmpdf$enddate<-str_extract(
+  tmpdf$years,
+  '\\–.*$'
+) %>% str_replace("\\–","")
+tmpdf$startdate<-mdy(tmpdf$startdate)
+tmp<-tmpdf$enddate=='present'
+tmpdf$enddate[tmp]<-paste0(month(today()),'-',day(today()),'-',year(today()))
+tmpdf$enddate<-mdy(tmpdf$enddate)
+
+#now, generate full datset
+tmpdf<-lapply( 1:nrow(tmpdf),function(i) {
+  #i<-60
+  #print(i)
+  thisrow<-tmpdf[i,]
+  data.frame(
+    president=str_replace_all(
+      thisrow$president,"[0-9]+","" #b/c footnotes, etc
+    ) %>% str_trim(), 
+    date=seq(
+      thisrow$startdate,
+      thisrow$enddate,
+      by='days'
+    )
+  )
+}) %>% rbind.fill %>% data.table
+
+#keep only those that are in mvotesdf
+mvotesdf$date<-ymd(mvotesdf$date)
+mvotesdf<-merge(
+  mvotesdf,
+  tmpdf,
+  by='date',
+  all.x=T
+)
+
+#summarize by president
+plotdf<-mvotesdf[
+  !is.na(punitive) &
+    !is.na(group) &
+    group=='CBC'
+  ,
+  .(
+    punitive_pct=100 * mean(punitive_vote,na.rm=T),
+    punitive_votes = length(unique(congress_rollnumber)),
+    start_date = min(date)
+  )
+  ,
+  by=c(
+    "group",
+    "president"
+  )
+]
+setorder(plotdf,group,president)
+
+plotdf$lastname<-str_extract(plotdf$president,'[A-z]+$')
+tmp<-plotdf$lastname=='Bush'
+plotdf$lastname[tmp]<-c('Bush I','Bush II')
+tmplevels<-plotdf$lastname[order(plotdf$start_date)]
+plotdf$lastname<-factor(plotdf$lastname,tmplevels %>% rev)
+
+plotdf$fill<-plotdf$lastname%in%c('Nixon','Reagan')
+tmpfills<-c('red','darkgrey'); names(tmpfills)<-c(T,F)
+
+g.tmp<- ggplot(
+  plotdf,
+  aes(
+    x=lastname,
+    y=punitive_pct,
+    fill=fill
+  )
+) + 
+  geom_bar(
+    stat='identity',
+    width=0.5,
+    color='black'
+  ) +
+  scale_fill_manual(
+    guide='none',
+    values=tmpfills
+  ) +
+  theme_bw() +
+  coord_flip() +
+  ylab("") +
+  xlab("% of CBC Voting Punitively\n")
+
+setwd(outputdir)
+tmpname<-"fig_voting_presidents.png"
+ggsave(
+  plot=g.tmp,
+  filename=tmpname,
+  width=6,
+  height=10
+)
+output(plotdf,tmpname)
+
 #########################################################
 #########################################################
 
 #SUMMARIZE
+
+#because before 1960, sample is sparse
+#set everythign before 1960 to 1960
+tmp<-mvotesdf$year<=1960
+mvotesdf$year[tmp]<-1960
+
 #fit the loess 
 sumdf<-mvotesdf[
   !is.na(punitive) &
     !is.na(group)
   ,
   .(
-    punitive_pct=100 * mean(punitive_vote,na.rm=T),
-    handcoded = unique(handcoded)
+    punitive_pct = 100 * mean(punitive_vote,na.rm=T),
+    punitive_votes = length(unique(congress_rollnumber))
   )
   ,
   by=c(
     "group",
     "year"
   )
-  ]
+]
 setorder(sumdf,group,year)
+
+# #just the handcoded ones
+# sumdf2<-mvotesdf[
+#   !is.na(punitive) & 
+#     !is.na(group) &
+#     handcoded==T
+#   ,
+#   .(
+#     punitive_pct = 100 * mean(punitive_vote,na.rm=T)
+#   )
+#   ,
+#   by=c(
+#     'group',
+#     'year'
+#   )
+# ]
 
 sumdf<-by(sumdf,sumdf$group,function(df) {
   #df<-sumdf[sumdf$group=="Democrats",]
@@ -124,13 +266,13 @@ diffdf<-by(sumdf,sumdf$year,function(df) {
   )
   dems<-rnorm(
     1000,
-    mean=df$mu.loess[df$group=='Democrats'],
-    sd=df$se.loess[df$group=='Democrats']
+    mean=df$mu.loess[df$group=='Non-CBC Democrats'],
+    sd=df$se.loess[df$group=='Non-CBC Democrats']
   )
   repubs<-rnorm(
     1000,
-    mean=df$mu.loess[df$group=='Republicans'],
-    sd=df$se.loess[df$group=='Republicans']
+    mean=df$mu.loess[df$group=='Non-CBC Republicans'],
+    sd=df$se.loess[df$group=='Non-CBC Republicans']
   )
   tmpdf<-rbind(
     data.frame(quantile(dems - cbc,c(0.025,0.5,0.975)) %>% t),
@@ -147,41 +289,60 @@ diffdf<-by(sumdf,sumdf$year,function(df) {
 
 #PLTO THE AVERAGE
 
+#load
+setwd(codedir); source('genconventional.R')
+
 plotdf<-sumdf
 plotdf$facet<-"estimated"
 plotdf$yhat<-plotdf$mu.loess
 
 #add conventional view
-loopdf<-expand.grid(
+loopdf<-data.frame(
   sumcat=c(
     'CBC',
-    'Democrats',
-    'Republicans'
+    'Non-CBC Democrats',
+    'Non-CBC Republicans'
   )
 )
-c<-30
-loopdf$startpoint<-c(
-  50-c,50,50+0.9*c
-)
-loopdf$endpoint<-c(
-  50-c,50+c,50+c
-)
+
+# c<-30
+# loopdf$startpoint<-c(
+#   50-c, 
+#   50,
+#   50+0.9*c
+# )
+# loopdf$endpoint<-c(
+#   50-c,
+#   50+c,
+#   50+c
+# )
+
 tmpseq.i<-1:nrow(loopdf)
 tmpdf<-lapply(tmpseq.i,function(i) {
+  #i<-2
+  print(i)
   endyr<-max(plotdf$year)
   styr<-min(plotdf$year)
   thisrow<-loopdf[i,]
-  m<-(thisrow$endpoint-thisrow$startpoint)/(endyr-styr)
-  b<-thisrow$startpoint - (styr * m)
-  fun.y<-function(x) {
-    m * x + b
+  # m<-(thisrow$endpoint-thisrow$startpoint)/(endyr-styr)
+  # b<-thisrow$startpoint - (styr * m)
+  # fun.y<-function(x) {
+  #   m * x + b
+  # }
+  # yhat<-sapply(
+  #   styr:endyr,
+  #   fun.y
+  # )
+  
+  if(thisrow=='CBC') {
+    yhat<-20
+  } else if(thisrow=='Non-CBC Democrats') {
+    yhat<-genconventional(40,70,80)[-(1),2]
+  } else if(thisrow=='Non-CBC Republicans') {
+    yhat<-genconventional(55,80,80)[-(1),2]
   }
-  yhat<-sapply(
-    styr:endyr,
-    fun.y
-  )
   data.frame(
-    group=thisrow$sumcat,
+    group=thisrow,
     year=styr:endyr,
     mu.loess=yhat,
     stringsAsFactors=F
@@ -210,8 +371,8 @@ plotdf$facet<-factor(
 )
 
 tmplevels<-c(
-  "Democrats",
-  "Republicans",
+  "Non-CBC Democrats",
+  "Non-CBC Republicans",
   "CBC"
 )
 plotdf$group<-factor(
@@ -226,31 +387,29 @@ tmpcolors<-c(
 )
 names(tmpcolors)<-levels(plotdf$group)
 
-tmpdf<-plotdf[plotdf$handcoded==T & !is.na(plotdf$handcoded),]
-
 g.tmp<-ggplot(
   plotdf,
   aes(
     x=year,
     y=mu.loess,
-    ymin=mu.loess - 1.96*se.loess,
-    ymax=mu.loess + 1.96*se.loess,
+    #ymin=mu.loess - 1.96*se.loess,
+    #ymax=mu.loess + 1.96*se.loess,
     group=group,
     color=group
   )
 ) +
   geom_line(size=1) +
-  geom_ribbon(
-    alpha=0.25,
-    color='grey'
-  ) +
-  geom_point(
-    data=tmpdf,
-    aes(
-      y=punitive_pct
-    ),
-    alpha=0.25
-  ) +
+  # geom_ribbon(
+  #   alpha=0.25,
+  #   color='grey'
+  # ) +
+  # geom_point(
+  #   data=sumdf2,
+  #   aes(
+  #     y=punitive_pct
+  #   ),
+  #   alpha=0.25
+  # ) +
   scale_color_manual(
     name="",
     values=tmpcolors
@@ -290,8 +449,8 @@ tmplevels<-c(
   "repubs"
 )
 tmplabels<-c(
-  "Democrats",
-  "Republicans"
+  "Non-CBC Democrats",
+  "Non-CBC Republicans"
 )
 plotdf$group<-factor(
   plotdf$group,

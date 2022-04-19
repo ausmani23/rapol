@@ -400,6 +400,49 @@ nrow(finaldf)
 ##########################################################
 ##########################################################
 
+# OUTPUT A DESCRIPTIVE TABLE
+
+require(xtable)
+finaldf<-data.table(finaldf)
+tabdf <- finaldf[
+  ,
+  .(
+    N=.N,
+    white=sum(race==1,na.rm=T),
+    black=sum(race==2,na.rm=T),
+    other=sum(race==3,na.rm=T),
+    range=paste0(min(year),"-",max(year))
+  )
+  ,
+  by=c('question')
+]
+names(tabdf)<-c('Question ID','Respondents','White','Black','Other','Period')
+
+#how many respondents
+nrow(finaldf)
+length(unique(finaldf$respid))
+length(unique(finaldf$pollid))
+
+tabdf_latex<- xtable(
+  tabdf,
+  caption='Information about Questions in the Public Opinion Sample',
+  type='latex'
+)
+setwd(outputdir); dir()
+print(
+  tabdf_latex,
+  file='tab_po_questions_EDIT.tex'
+)
+
+#also output the full text of these questions
+setwd(datadir); dir()
+qinfo<-readLines('questions_fortex.txt')
+setwd(outputdir); dir()
+write(qinfo,'list_po_questions_EDIT.tex')
+
+##########################################################
+##########################################################
+
 #save out
 setwd(filesdir)
 # rm("fulldf") #confusing me

@@ -6,7 +6,8 @@ This repository contains replication code and materials for 'The Racial Politics
 
 + 'code' contains three subfolders (described below) and:
 
-    + miscgraphs.R - Creates misc. graphs for the paper *[fig_citerate.png]
+    + extra_output.R - Creates graphs that are in the paper but which don't fall under any of the headings *[fig_citerate.png]*
+    + genconventonal.R - Creates time-series fitting conventional expectations of trends
 
 + 'code/01_public opinion' contains the code to generate the figures that correspond to Part 4.1 of the paper, 'Public Opinion'.
 
@@ -18,6 +19,7 @@ This repository contains replication code and materials for 'The Racial Politics
     + 06_regmods_output.R - Illustrates the marginal (adjusted) effect of race on p(anxious), p(mistrustful), p(punitive) *[fig_po_effectofrace.png]*
     + 07_predict.R - Combines estimates from the multilevel models with Census population data to generate predictions for each demographic cell between 1956 and 2014 
     + 08_predict_output.R - Summarizes race-specific trends over time (with and without confidence intervals) and the black-white gap (with confidence interval). *[fig_po_trends.png, fig_po_trends_blackwhitegap.pg, fig_po_trends_byrace.png]*
+    + 09_extra_output.R - Illustrates that trends in punitiveness fit trends in crime rather than trends in civil rights activity or riots
     + functions.R - Contains misc functions used in the scripts
     + getcode.R - Crosswalk function
     + getinfo2.R - Wrapper to getcode for this data
@@ -35,7 +37,7 @@ This repository contains replication code and materials for 'The Racial Politics
     + 01_dindmods.R - Estimates the effect of federally-mandated redistricting on incarceration and police rates. Runs preferred specifications and a variety of alternative specifications.
     + 02_regmods.R - Estimates the effect of black political representation on incarceration and police rates via a variety of autoregressive distributed lag (ADL) models. 
     + 03_regmods_robustness.R - Estimates a variety of alternative specifications of the ADL models.
-    + 04_summarize.R - Summarizes estimates from preferred models, from both approaches. Illustrates the robustness (or lack of robustness) of the main conclusions to alternative specifications. *[fig_dind_prefests.png, fig_dind_robests.png]*
+    + 04_summarize.R - Illustrates the rise in black representation. Summarizes estimates from preferred models, from both approaches. Illustrates the robustness (or lack of robustness) of the main conclusions to alternative specifications. *[fig_dind_beoshock.png, fig_dind_prefests.png, fig_dind_robests.png]*
     
 + 'meta' contains files that carry metadata which is more convenient to store in spreadsheet form than in an .R script
 

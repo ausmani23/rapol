@@ -139,6 +139,76 @@ ggsave(
   height=3
 )
 
+#########################################################
+#########################################################
+
+#FIG - THE HOCKEY STICK PLOT
+setwd(datadir); dir()
+
+#add other countries
+
+plotdf <- fread('histpundf_national_220328.csv')
+plotdf$fiveyear<-floor(plotdf$year/5)*5
+plotdf$usa<-plotdf$cowcode==2
+plotdf<-plotdf[
+  statistic%in%c('prisoners','population') & 
+    compset=='Rich'
+  ,
+  .(
+    value=median(value)
+  )
+  ,
+  by=c(
+    'usa',
+    'fiveyear',
+    'statistic'
+  )
+]
+plotdf<-spread(plotdf,statistic,value)
+plotdf$prisoners_rate <- 10^5 *  plotdf$prisoners/plotdf$population
+plotdf<-plotdf[!is.na(plotdf$prisoners_rate),]
+
+tmplevels<-c(T,F)
+tmplabels<-c('USA',"Other Rich Countries")
+plotdf$usa<-factor(plotdf$usa,tmplevels,tmplabels)
+
+tmpcolors<-c('black','grey')
+names(tmpcolors)<-tmplabels
+firstyear<-min(plotdf$fiveyear[plotdf$usa=='USA'])
+
+g.tmp<- ggplot(
+  plotdf[fiveyear>=firstyear],
+  aes(
+    x=fiveyear,
+    y=prisoners_rate,
+    color=usa,
+    group=usa
+  )
+) +
+  geom_line(
+    size=1
+  ) +
+  scale_color_manual(
+    values=tmpcolors,
+    name=""
+  ) +
+  xlab('') +
+  ylab('Prisoners per 100,000\n') +
+  theme_bw() +
+  theme(
+    legend.position='bottom',
+    legend.direction='horizontal'
+  )
+
+setwd(outputdir)
+tmpname<-'fig_comparative.png'
+ggsave(
+  plot=g.tmp,
+  filename=tmpname,
+  width=8,
+  height=4
+)
+output(plotdf,tmpname)
 
 #########################################################
 #########################################################

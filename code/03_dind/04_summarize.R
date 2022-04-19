@@ -310,10 +310,13 @@ output(plotdf,tmpname)
 
 #also export welfbenefits
 tmp<-finaldf$dv=="welfbenefits" &
-  finaldf$spec%in%c("simple","controls","racialthreat") &
+  finaldf$spec%in%c(
+    "simple",
+    "controls",
+    "racialthreat"
+  ) &
   finaldf$method=="normal"
 plotdf<-finaldf[tmp,]
-
 
 plotdf$dv <- factor(
   plotdf$dv,
@@ -323,8 +326,16 @@ plotdf$dv <- factor(
 
 plotdf$spec <- factor(
   plotdf$spec,
-  levels=c('racialthreat','simple','controls') %>% rev,
-  labels=c('If Racial Threat','Estimated (Means)','Estimated (Preferred)') %>% rev
+  levels=c(
+    'racialthreat',
+    'simple',
+    'controls'
+  ) %>% rev,
+  labels=c(
+    'If Racial Threat',
+    'Estimated (Means)',
+    'Estimated (Preferred)'
+  ) %>% rev
 )
 
 g.tmp <- ggplot(
@@ -372,10 +383,16 @@ tmpname<-"fig_dind_welfare.png"
 ggsave(
   plot=g.tmp,
   tmpname,
-  width=6,
+  width=8,
   height=3
 )
 output(plotdf,tmpname)
+
+#is welfare ever negative?
+tmp<-finaldf$dv=="welfbenefits" &
+  finaldf$method=="normal"
+plotdf<-finaldf[tmp,]
+plotdf[plotdf$mu<0,]
 
 
 #########################################################
@@ -537,3 +554,74 @@ output(plotdf,tmpname)
 
 #########################################################
 #########################################################
+
+#FIG - ILLUSTRATE THE RISE IN BLACK REPRESNTATION
+
+setwd(filesdir); dir()
+tmpdf<-read.csv(
+  '03_dind_beodf_dd.csv',
+  stringsAsFactors=F
+)
+tmpdf<-data.table(tmpdf)
+plotdf<-tmpdf[
+  year%in%1980:2000,
+  .(beopct=mean(beopct_all)),
+  by=c("year","t")
+]
+
+tmplevels<-c(
+  0,1
+)
+tmplabels<-c(
+  "Not Redistricted",
+  "Redistricted"
+)
+plotdf$t<-factor(
+  plotdf$t,
+  tmplevels,
+  tmplabels
+)
+
+tmpcolors<-c(
+  'blue','red'
+)
+names(tmpcolors)<-
+  levels(plotdf$t)
+
+g.tmp<-ggplot(
+  plotdf,
+  aes(
+    x=year,
+    y=beopct,
+    group=t,
+    color=t
+  )
+) +
+  geom_line(
+    size=1
+  ) + 
+  geom_vline(
+    xintercept=1990,
+    linetype='dashed',
+    color='black'
+  ) +
+  scale_color_manual(
+    name="",
+    values=tmpcolors
+  ) +
+  xlab("") + 
+  ylab("Black Representatives (%)\n") +
+  theme_bw() +
+  theme(
+    legend.direction='horizontal',
+    legend.position='bottom'
+  )
+
+tmpname<-paste0("fig_dind_beoshock.png")
+setwd(outputdir)
+ggsave(
+  plot=g.tmp,
+  filename=tmpname,
+  width=6,
+  height=6
+)

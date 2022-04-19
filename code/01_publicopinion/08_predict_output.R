@@ -167,38 +167,54 @@ loopdf<-expand.grid(
     'mistrust'
   )
 )
-#these are start and end points
-c<-20
-loopdf$startpoint<-c(
-  50,50-c,50,50-c,50,50+c
-)/100 
-loopdf$endpoint<-c(
-  50+c,50-c,50+c,50-c,50-c,50+c
-)/100
+#quick function to help generate conventional expectations
+setwd(codedir); source('genconventional.R')
+
 tmpseq.i<-1:nrow(loopdf)
 tmpdf<-lapply(tmpseq.i,function(i) {
   thisrow<-loopdf[i,]
-  m<-(thisrow$endpoint-thisrow$startpoint)/(2014-1955)
-  b<-thisrow$startpoint - (1955 * m)
-  fun.y<-function(x) {
-    m * x + b
+  if(thisrow$race==2) {
+    m<-(thisrow$endpoint-thisrow$startpoint)/(2014-1955)
+    b<-thisrow$startpoint - (1955 * m)
+    fun.y<-function(x) {
+      m * x + b
+    }
+    yhat<-sapply(
+      1955:2014,
+      fun.y
+    )
+    data.frame(
+      state_alpha2="all",
+      race=thisrow$race,
+      dimension=thisrow$dimension,
+      year=1955:2014,
+      mu=yhat,
+      stringsAsFactors=F
+    )
+  } else {
+    if(thisrow$dimension%in%c('punitive','anxiety')) {
+      data.frame(
+        state_alpha2="all",
+        race=thisrow$race,
+        dimension=thisrow$dimension,
+        year=1955:2014,
+        mu=genconventional(40,65,70)$mu/100,
+        stringsAsFactors=F
+      )
+    } else {
+      data.frame(
+        state_alpha2="all",
+        race=thisrow$race,
+        dimension=thisrow$dimension,
+        year=1955:2014,
+        mu=genconventional(50,35,30)$mu/100,
+        stringsAsFactors=F
+      )
+    }
   }
-  yhat<-sapply(
-    1955:2014,
-    fun.y
-  )
-  data.frame(
-    state_alpha2="all",
-    race=thisrow$race,
-    dimension=thisrow$dimension,
-    year=1955:2014,
-    mu=yhat,
-    stringsAsFactors=F
-  )
 }) %>% rbind.fill
 tmpdf$facet<-'Conventional'
 tmpdf$mu.loess<-tmpdf$mu
-
 
 plotdf<-rbind.fill(
   plotdf,
@@ -251,10 +267,10 @@ g.tmp<-ggplot(
   )
 ) +
   geom_line(
-    size=2
+    size=1
   ) +
   geom_point(
-    data=plotdf,
+    data=plotdf[plotdf$facet=='Estimated',],
     aes(
       y=mu
     ),
@@ -280,8 +296,8 @@ tmpname<-"fig_po_trends.png"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
-  width=10,
-  height=8
+  width=8,
+  height=10
 )
 output(plotdf,tmpname)
 
@@ -416,7 +432,7 @@ g.tmp<-ggplot(
   )
 ) +
   geom_line(
-    size=2
+    size=1
   ) + 
   geom_ribbon(
     alpha=0.25
@@ -481,7 +497,7 @@ g.tmp<-ggplot(
   )
 ) +
   geom_line(
-    size=2
+    size=1
   ) + 
   geom_ribbon(
     alpha=0.25
