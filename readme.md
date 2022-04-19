@@ -19,7 +19,7 @@ This repository contains replication code and materials for 'The Racial Politics
     + 06_regmods_output.R - Illustrates the marginal (adjusted) effect of race on p(anxious), p(mistrustful), p(punitive) *[fig_po_effectofrace.png]*
     + 07_predict.R - Combines estimates from the multilevel models with Census population data to generate predictions for each demographic cell between 1956 and 2014 
     + 08_predict_output.R - Summarizes race-specific trends over time (with and without confidence intervals) and the black-white gap (with confidence interval). *[fig_po_trends.png, fig_po_trends_blackwhitegap.pg, fig_po_trends_byrace.png]*
-    + 09_extra_output.R - Illustrates that trends in punitiveness fit trends in crime rather than trends in civil rights activity or riots
+    + 09_extra_output.R - Illustrates that trends in punitiveness fit trends in crime rather than trends in civil rights activity or riots *[fig_po_correlations.png]*
     + functions.R - Contains misc functions used in the scripts
     + getcode.R - Crosswalk function
     + getinfo2.R - Wrapper to getcode for this data
