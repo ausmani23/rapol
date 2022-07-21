@@ -50,6 +50,8 @@ output <- function(df,tmpname) {
   )
 }
 
+require(ggplot2)
+
 #########################################################
 #########################################################
 
@@ -226,9 +228,11 @@ plotdf<-by(plotdf,plotdf$var,function(df) {
 unique(plotdf$var)
 tmp<-plotdf$var%in%c(
   "protest",
+  "riots",
   "white_estimated_punitiveness",
   "black_estimated_punitiveness",
-  "fbivcrt"
+  "fbivcrt",
+  "fbihom"
 )
 plotdf<-plotdf[tmp,]
 
@@ -236,13 +240,17 @@ tmplevels<-c(
   "white_estimated_punitiveness",
   "black_estimated_punitiveness",
   "protest",
-  "fbivcrt"
+  "riots",
+  "fbivcrt",
+  "fbihom"
 )
 tmplabels<-c(
   "Whites",
   "Blacks",
   "Protests",
-  "Violence"
+  "Riots",
+  "Violent Crime Rate",
+  "Homicide Rate"
 )
 plotdf$var<-factor(
   plotdf$var,
@@ -253,7 +261,9 @@ tmpcolors<-c(
   'red',
   'blue',
   'black',
-  'purple'
+  'grey',
+  'purple',
+  'darkgreen'
 )
 names(tmpcolors)<-levels(plotdf$var)
 

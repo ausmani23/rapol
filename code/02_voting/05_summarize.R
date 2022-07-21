@@ -80,7 +80,7 @@ unique(mvotesdf$congress_rollnumber[mvotesdf$handcoded]) %>% length
 
 #fix groups for display clarity
 tmp<-mvotesdf$group%in%c('Republicans','Democrats')
-mvotesdf$group[tmp]<-paste0('Non-CBC ',mvotesdf$group[tmp])
+mvotesdf$group[tmp]<-paste0('Non-Black ',mvotesdf$group[tmp])
 
 #########################################################
 #########################################################
@@ -142,7 +142,7 @@ mvotesdf<-merge(
 plotdf<-mvotesdf[
   !is.na(punitive) &
     !is.na(group) &
-    group=='CBC'
+    group=='Black'
   ,
   .(
     punitive_pct=100 * mean(punitive_vote,na.rm=T),
@@ -186,7 +186,7 @@ g.tmp<- ggplot(
   theme_bw() +
   coord_flip() +
   ylab("") +
-  xlab("% of CBC Voting Punitively\n")
+  xlab("% of Black Members Voting Punitively\n")
 
 setwd(outputdir)
 tmpname<-"fig_voting_presidents.png"
@@ -261,18 +261,18 @@ diffdf<-by(sumdf,sumdf$year,function(df) {
   #df<-sumdf[sumdf$year==1947,]
   cbc<-rnorm(
     1000,
-    mean=df$mu.loess[df$group=='CBC'],
-    sd=df$se.loess[df$group=='CBC']
+    mean=df$mu.loess[df$group=='Black'],
+    sd=df$se.loess[df$group=='Black']
   )
   dems<-rnorm(
     1000,
-    mean=df$mu.loess[df$group=='Non-CBC Democrats'],
-    sd=df$se.loess[df$group=='Non-CBC Democrats']
+    mean=df$mu.loess[df$group=='Non-Black Democrats'],
+    sd=df$se.loess[df$group=='Non-Black Democrats']
   )
   repubs<-rnorm(
     1000,
-    mean=df$mu.loess[df$group=='Non-CBC Republicans'],
-    sd=df$se.loess[df$group=='Non-CBC Republicans']
+    mean=df$mu.loess[df$group=='Non-Black Republicans'],
+    sd=df$se.loess[df$group=='Non-Black Republicans']
   )
   tmpdf<-rbind(
     data.frame(quantile(dems - cbc,c(0.025,0.5,0.975)) %>% t),
@@ -299,9 +299,9 @@ plotdf$yhat<-plotdf$mu.loess
 #add conventional view
 loopdf<-data.frame(
   sumcat=c(
-    'CBC',
-    'Non-CBC Democrats',
-    'Non-CBC Republicans'
+    'Black',
+    'Non-Black Democrats',
+    'Non-Black Republicans'
   )
 )
 
@@ -334,11 +334,11 @@ tmpdf<-lapply(tmpseq.i,function(i) {
   #   fun.y
   # )
   
-  if(thisrow=='CBC') {
+  if(thisrow=='Black') {
     yhat<-20
-  } else if(thisrow=='Non-CBC Democrats') {
+  } else if(thisrow=='Non-Black Democrats') {
     yhat<-genconventional(40,70,80)[-(1),2]
-  } else if(thisrow=='Non-CBC Republicans') {
+  } else if(thisrow=='Non-Black Republicans') {
     yhat<-genconventional(55,80,80)[-(1),2]
   }
   data.frame(
@@ -371,9 +371,9 @@ plotdf$facet<-factor(
 )
 
 tmplevels<-c(
-  "Non-CBC Democrats",
-  "Non-CBC Republicans",
-  "CBC"
+  "Non-Black Democrats",
+  "Non-Black Republicans",
+  "Black"
 )
 plotdf$group<-factor(
   plotdf$group,
@@ -449,8 +449,8 @@ tmplevels<-c(
   "repubs"
 )
 tmplabels<-c(
-  "Non-CBC Democrats",
-  "Non-CBC Republicans"
+  "Non-Black Democrats",
+  "Non-Black Republicans"
 )
 plotdf$group<-factor(
   plotdf$group,
@@ -496,7 +496,7 @@ g.tmp<-ggplot(
   ) +
   theme_bw() +
   xlab("") +
-  ylab("Punitiveness Gap to CBC\n")
+  ylab("Punitiveness Gap to Black Members\n")
 
 setwd(outputdir)
 tmpname<-"fig_voting_differences.png"

@@ -278,7 +278,7 @@ tmp<-mvotesdf$black==0 &
   mvotesdf$party=="Democrats"
 mvotesdf$group[tmp]<-"Democrats"
 tmp<-mvotesdf$black==1
-mvotesdf$group[tmp]<-"CBC"
+mvotesdf$group[tmp]<-"Black"
 table(mvotesdf$group)
 
 #classify votes

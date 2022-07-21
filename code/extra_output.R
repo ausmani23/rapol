@@ -212,3 +212,89 @@ output(plotdf,tmpname)
 
 #########################################################
 #########################################################
+
+# CONVENTIONAL VIEW CITES/GRAPH
+
+setwd(datadir); dir()
+tmp<-readLines('conventional.bib',encoding='utf-8')
+splitAt <- function(x, pos) unname(split(x, cumsum(seq_along(x) %in% pos)))
+tmp<-splitAt(tmp,which(tmp==""))
+
+#loop through and get key info
+tmpdf <- lapply(seq_along(tmp),function(i) {
+  print(i)
+  #i<-19
+  x<-tmp[[i]]
+  date <- x[str_detect(x,'\\tdate')] %>%
+    str_replace(".*?\\{","") %>% 
+    str_replace("\\}\\,.*$","")
+  author <- x[str_detect(x,'\\tauthor')] %>%
+    str_replace(".*?\\{","") %>% 
+    str_replace("\\}\\,.*$","") %>%
+    str_replace("\\{","") %>%
+    str_replace("\\}","")
+  if(str_detect(author,"\\,")) {
+    author <- str_extract_all(author,"[A-z]+\\,")[[1]] 
+    author <- str_replace(author,"\\,","")
+  }
+  if(length(author)==2) {
+    author <- paste0(author,collapse=" and ")
+  } else if (length(author)>2) {
+    author <- paste0(author[1]," et al.")
+  }
+  title <- x[str_detect(x,'\\tshorttitle')] %>%
+    str_replace(".*?\\{","") %>% 
+    str_replace("\\}\\,.*$","")
+  if(length(title)==0) { #if there isn't a shorttitle
+    title <- x[str_detect(x,'\\ttitle')] %>%
+      str_replace(".*?\\{","") %>% 
+      str_replace("\\}\\,.*$","")
+  }
+  data.frame(
+    date,
+    author,
+    title,
+    stringsAsFactors=F
+  ) 
+}) %>% rbind.fill
+tmpdf$date <- str_extract(tmpdf$date,"[0-9]{4}") %>%
+  str_replace("\\{","") %>% str_replace("\\}","")
+tmpdf$author<-str_replace(tmpdf$author,"\\{","") %>%
+  str_replace("\\}","")
+tmpdf$title<-str_replace(tmpdf$title,"\\*","")
+#detect problem titles
+spaces <- str_count(tmpdf$title,"\\s")
+tmp<-spaces>100
+tmpdf$title[tmp]<-str_extract(
+  tmpdf$title[tmp],
+  ".*?\\s{3}"
+) %>%
+  str_trim
+
+tmp<-tmpdf$date=='2004' & 
+  tmpdf$author=='Bobo and Johnson'
+tmpdf$title[tmp]<-'A Taste for Punishment'
+
+tmpdf<-tmpdf[order(tmpdf$date),]
+names(tmpdf)<-c('Year','Author','Title')
+
+require(xtable)
+tabdf_latex<- xtable(
+  tmpdf,
+  #align=c('l','l','|','l','l','l','l','l'),
+  #caption='Information about Questions in the Public Opinion Sample',
+  type='latex'
+)
+align(tabdf_latex) <- "lp{0.5in}p{2in}p{2.5in}" #here is the change
+setwd(outputdir); dir()
+print(
+  tabdf_latex,
+  include.rownames=F,
+  floating=F,
+  file='tab_conventionalview.tex',
+  tabular.environment='longtable'
+)
+
+
+
+

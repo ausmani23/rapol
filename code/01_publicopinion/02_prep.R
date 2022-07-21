@@ -404,6 +404,14 @@ nrow(finaldf)
 
 require(xtable)
 finaldf<-data.table(finaldf)
+
+#how many respondents
+nrow(finaldf)
+length(unique(finaldf$respid))
+length(unique(finaldf$pollid))
+
+
+#create a table
 tabdf <- finaldf[
   ,
   .(
@@ -416,21 +424,24 @@ tabdf <- finaldf[
   ,
   by=c('question')
 ]
-names(tabdf)<-c('Question ID','Respondents','White','Black','Other','Period')
 
-#how many respondents
-nrow(finaldf)
-length(unique(finaldf$respid))
-length(unique(finaldf$pollid))
+#prettify
+tabdf$N<-prettyNum(tabdf$N,big.mark=',')
+tabdf$white<-prettyNum(tabdf$white,big.mark=',')
+tabdf$black<-prettyNum(tabdf$black,big.mark=',')
+tabdf$other<-prettyNum(tabdf$other,big.mark=',')
+names(tabdf)<-c('Question','Respondents','White','Black','Other','Period')
 
 tabdf_latex<- xtable(
   tabdf,
+  align=c('l','l','|','l','l','l','l','l'),
   caption='Information about Questions in the Public Opinion Sample',
   type='latex'
 )
 setwd(outputdir); dir()
 print(
   tabdf_latex,
+  include.rownames=F,
   file='tab_po_questions_EDIT.tex'
 )
 
