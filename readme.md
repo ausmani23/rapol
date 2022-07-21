@@ -29,7 +29,7 @@ Note that because the paper is not based on a single result but many, there is n
 + 'code/02_voting' contains the code to generate the figures that correspond to Part 4.2 of the paper, 'Voting Patterns in the House of Representatives'.
 
     + 01_getvotes.R - Loads a dataset of 45 hand-coded punitive votes in the House, merges this with the universe of house votes since 1945, and uses the issue codes of the hand-coded votes to identify a sample of 'punitive' votes
-    + 02_matcheos.R - Loads a dataset with information about all congressmen, merges this with a dataset on members of the Congressional Black Caucus
+    + 02_matcheos.R - Loads a dataset with information about all congressmen, merges this with a dataset on black members of congress
     + 03_merge.R - Merges the votes, members, and a members-votes dataset together
     + 04_predict.R - Trains a model using the average DW-Nominate scores of those voting 'yes' and 'no' in the hand-coded bills to predict the direction of a punitive vote in the not-hand-coded bills
     + 05_summarize.R - Summarizes levels and differences in punitive voting in the house
