@@ -61,12 +61,11 @@ robsdf$pref<-F
 
 #identify the preferred ests in dd
 tmp<-dddf$dv%in%c(
-  "incrt_t_jur",
   "imprt_t_jur",
   "officers_pcap"
 )
 tmp<-tmp & 
-  dddf$spec%in%c("controls") &
+  dddf$spec%in%c("divtrend") &
   dddf$method=="normal"
 dddf$pref<-F
 dddf$pref[tmp]<-T
@@ -203,22 +202,20 @@ fill.labels<-c(
 #FIG 1 - PREFERRED ESTS
 
 #get preferred ests
-tmp<-finaldf$pref & 
-  finaldf$dv%in%c(
-    "imprt_t_jur",
-    "officers_pcap"
-  ) 
-tmp2<-finaldf$approach=="reg" & 
-  finaldf$iv=="beopct_all" &
-  finaldf$type=="longrun"
-tmp2<-tmp2 | (
-  finaldf$approach=="dd" & 
-    finaldf$iv=="t.post.t"
+#(8/23 update: relegating ADLs to appendix)
+
+tmp<-finaldf$dv%in%c(
+  'imprt_t_jur',
+  'officers_pcap'
 )
-tmp2<-tmp2 | (
-  finaldf$approach=="expectation"
+tmp2<-(
+  finaldf$approach=='dd' & 
+  finaldf$pref
 )
-tmp<-tmp & tmp2
+# tmp3<-(
+#   finaldf$approach=="expectation"
+# )
+tmp<-tmp & (tmp2 )#| tmp3)
 plotdf<-finaldf[tmp,]
 
 #dv
@@ -236,15 +233,18 @@ plotdf$dv<-factor(
 )
 
 #approach
+plotdf$approach<-paste0(
+  plotdf$approach,"_",plotdf$spec
+)
 tmplevels<-c(
-  "expectation",
-  "dd",
-  "reg"
+  "expectation_NA",
+  "dd_divtrend",
+  "dd_controls"
 )
 tmplabels<-c(
   "Conventional View",
-  "Estimated, D-in-D",
-  "Estimated, ADLs"
+  "Estimated",
+  "Estimated (+ Controls)"
 )
 plotdf$approach<-factor(
   plotdf$approach,
@@ -283,7 +283,7 @@ g.tmp<-ggplot(
   scale_color_discrete(
     name=""
   ) +
-  ylab("\nStandardized Impact of Black Representation") +
+  ylab("\nImpact of Redistricting in SDs") +
   xlab("") +
   coord_flip() +
   facet_wrap(
@@ -298,11 +298,10 @@ ggsave(
   plot=g.tmp,
   tmpname,
   width=8,
-  height=6
+  height=2.5
 )
 output(plotdf,tmpname)
-
-
+plotdf
 #########################################################
 #########################################################
 
@@ -311,9 +310,9 @@ output(plotdf,tmpname)
 #also export welfbenefits
 tmp<-finaldf$dv=="welfbenefits" &
   finaldf$spec%in%c(
-    "simple",
-    "controls",
-    "racialthreat"
+    "divtrend",
+    "racialthreat"#,
+    #"controls"
   ) &
   finaldf$method=="normal"
 plotdf<-finaldf[tmp,]
@@ -328,13 +327,13 @@ plotdf$spec <- factor(
   plotdf$spec,
   levels=c(
     'racialthreat',
-    'simple',
+    'divtrend',
     'controls'
   ) %>% rev,
   labels=c(
     'If Racial Threat',
-    'Estimated (Means)',
-    'Estimated (Preferred)'
+    'Estimated',
+    'Estimated (+ Controls)'
   ) %>% rev
 )
 
@@ -369,7 +368,7 @@ g.tmp <- ggplot(
   scale_color_discrete(
     name=""
   ) +
-  ylab("\nStandardized Impact of Black Representation") +
+  ylab("\nImpact of Redistricting in SDs") +
   xlab("") +
   coord_flip() +
   facet_wrap(
@@ -387,10 +386,12 @@ ggsave(
   height=3
 )
 output(plotdf,tmpname)
+plotdf
 
 #is welfare ever negative?
 tmp<-finaldf$dv=="welfbenefits" &
-  finaldf$method=="normal"
+  finaldf$method=="normal" &
+  finaldf$approach!='expectation'
 plotdf<-finaldf[tmp,]
 plotdf[plotdf$mu<0,]
 
@@ -399,14 +400,6 @@ plotdf[plotdf$mu<0,]
 #########################################################
 
 #FIG 3 - ROBUST ESTS
-
-#which are the pref mods?
-tmp<-finaldf$pref
-finaldf[tmp,"mname"]
-
-#two secitons, two dvs, one estimate
-tmp<-!finaldf$pref
-plotdf<-finaldf[tmp,]
 
 setwd(metadir); dir()
 tmpdf<-read.csv(
@@ -417,7 +410,7 @@ tmp<-tmpdf$facet!=""
 tmpdf<-tmpdf[tmp,]
 plotdf<-merge(
   tmpdf,
-  plotdf,
+  finaldf,
   all.x=T
 )
 
@@ -442,13 +435,17 @@ if(max(tmptab)>1)
   stop()
 table(plotdf$x)
 
-#now we want to order the mods
+# manually order the mods
 # tmpdf<-unique(plotdf[,c("facet","y")])
+# row.names(tmpdf)<-NULL
+# tmpdf<-unique(tmpdf)
+# tmpdf<-tmpdf[order(tmpdf$facet,tmpdf$y),]
 # write.csv(
 #   tmpdf,
-#   "roborder_EDIT.csv",
+#   "03_dind_roborder_EDIT.csv",
 #   row.names=F
 # )
+
 tmpdf<-read.csv(
   '03_dind_roborder_EDITED.csv',
   stringsAsFactors=F
@@ -475,11 +472,13 @@ plotdf$facet<-factor(
 
 tmplevels<-c(
   "imprt",
-  "officers"
+  "officers",
+  "welfare"
 )
 tmplabels<-c(
   "Incarceration",
-  "Police"
+  "Police",
+  "Welfare Benefits"
 )
 plotdf$x<-factor(
   plotdf$x,
@@ -487,11 +486,12 @@ plotdf$x<-factor(
   tmplabels
 )
 
+#if ADL, add a space, so these can be unique labels
+plotdf$y[plotdf$facet=='ADL']<-paste0(" ",plotdf$y[plotdf$facet=='ADL'])
 tmporder<-order(plotdf$facet,plotdf$order)
-tmplevels<-plotdf$ydisp[tmporder] %>%
-  unique
-plotdf$ydisp<-factor(
-  plotdf$ydisp,
+tmplevels<-plotdf$y[tmporder]
+plotdf$y<-factor(
+  plotdf$y,
   rev(tmplevels),
   rev(tmplevels)
 )
@@ -507,10 +507,11 @@ plotdf$text<-formatC(
 )
 
 g.tmp<-ggplot(
-  plotdf,
+  #after revisions we choose only to show DD results
+  plotdf[plotdf$facet=='D-in-D',],
   aes(
     x=x,
-    y=ydisp,
+    y=y,
     fill=pval.fill,
     label=text
   )
@@ -548,9 +549,11 @@ ggsave(
   plot=g.tmp,
   tmpname,
   width=8,
-  height=4
+  height=6
 )
 output(plotdf,tmpname)
+
+plotdf[plotdf$mu<0 & plotdf$approach=='dd',]
 
 #########################################################
 #########################################################

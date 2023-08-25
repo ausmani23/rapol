@@ -170,56 +170,56 @@ loopdf<-expand.grid(
 #quick function to help generate conventional expectations
 setwd(codedir); source('genconventional.R')
 
-tmpseq.i<-1:nrow(loopdf)
-tmpdf<-lapply(tmpseq.i,function(i) {
-  thisrow<-loopdf[i,]
-  if(thisrow$race==2) {
-    m<-(thisrow$endpoint-thisrow$startpoint)/(2014-1955)
-    b<-thisrow$startpoint - (1955 * m)
-    fun.y<-function(x) {
-      m * x + b
-    }
-    yhat<-sapply(
-      1955:2014,
-      fun.y
-    )
-    data.frame(
-      state_alpha2="all",
-      race=thisrow$race,
-      dimension=thisrow$dimension,
-      year=1955:2014,
-      mu=yhat,
-      stringsAsFactors=F
-    )
-  } else {
-    if(thisrow$dimension%in%c('punitive','anxiety')) {
-      data.frame(
-        state_alpha2="all",
-        race=thisrow$race,
-        dimension=thisrow$dimension,
-        year=1955:2014,
-        mu=genconventional(40,65,70)$mu/100,
-        stringsAsFactors=F
-      )
-    } else {
-      data.frame(
-        state_alpha2="all",
-        race=thisrow$race,
-        dimension=thisrow$dimension,
-        year=1955:2014,
-        mu=genconventional(50,35,30)$mu/100,
-        stringsAsFactors=F
-      )
-    }
-  }
-}) %>% rbind.fill
-tmpdf$facet<-'Conventional'
-tmpdf$mu.loess<-tmpdf$mu
+# tmpseq.i<-1:nrow(loopdf)
+# tmpdf<-lapply(tmpseq.i,function(i) {
+#   thisrow<-loopdf[i,]
+#   if(thisrow$race==2) {
+#     m<-(thisrow$endpoint-thisrow$startpoint)/(2014-1955)
+#     b<-thisrow$startpoint - (1955 * m)
+#     fun.y<-function(x) {
+#       m * x + b
+#     }
+#     yhat<-sapply(
+#       1955:2014,
+#       fun.y
+#     )
+#     data.frame(
+#       state_alpha2="all",
+#       race=thisrow$race,
+#       dimension=thisrow$dimension,
+#       year=1955:2014,
+#       mu=yhat,
+#       stringsAsFactors=F
+#     )
+#   } else {
+#     if(thisrow$dimension%in%c('punitive','anxiety')) {
+#       data.frame(
+#         state_alpha2="all",
+#         race=thisrow$race,
+#         dimension=thisrow$dimension,
+#         year=1955:2014,
+#         mu=genconventional(40,65,70)$mu/100,
+#         stringsAsFactors=F
+#       )
+#     } else {
+#       data.frame(
+#         state_alpha2="all",
+#         race=thisrow$race,
+#         dimension=thisrow$dimension,
+#         year=1955:2014,
+#         mu=genconventional(50,35,30)$mu/100,
+#         stringsAsFactors=F
+#       )
+#     }
+#   }
+# }) %>% rbind.fill
+# tmpdf$facet<-'Conventional'
+# tmpdf$mu.loess<-tmpdf$mu
 
-plotdf<-rbind.fill(
-  plotdf,
-  tmpdf
-)
+# plotdf<-rbind.fill(
+#   plotdf,
+#   tmpdf
+# )
 
 #order race
 plotdf$race<-factor(
@@ -258,7 +258,7 @@ plotdf$facet<-factor(
 )
 
 g.tmp<-ggplot(
-  plotdf,
+  plotdf[plotdf$facet=='Estimated',],
   aes(
     x=year,
     y=mu.loess,
@@ -296,11 +296,17 @@ tmpname<-"fig_po_trends.png"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
-  width=8,
-  height=10
+  width=4,
+  height=8
 )
 output(plotdf,tmpname)
 
+#key points
+plotdf[race=='Black' & dimension=='Punitiveness' & year%in%c(1957,1989)]
+plotdf[race=='Black' & dimension=='Anxiety']
+
+which.max(plotdf$mu.loess[plotdf$race=='White' & plotdf$dimension=='Anxiety'])
+plotdf[23,]
 #########################################################
 #########################################################
 
@@ -347,7 +353,7 @@ diffoutput<-lapply(tmpseq.i,function(i) {
     mpredictdf,
     race,
     mu
-  )
+  ) %>% data.table
   tmpdf$mu<-tmpdf$`2` - tmpdf$`1`
   bwdf<-tmpdf[
     ,
@@ -369,7 +375,7 @@ diffoutput<-lapply(tmpseq.i,function(i) {
     mpredictdf,
     year,
     mu
-  )
+  ) %>% data.table
   minyear<-min(as.numeric(names(tmpdf)),na.rm=T)
   gathcols<-names(tmpdf)[!names(tmpdf)%in%c('race','rep','type',minyear)]
   tmpdf<-gather_(

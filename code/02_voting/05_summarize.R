@@ -76,7 +76,7 @@ mvotesdf<-fread(
 #how many
 unique(mvotesdf$congress_rollnumber[!mvotesdf$handcoded]) %>% length
 unique(mvotesdf$congress_rollnumber[mvotesdf$handcoded]) %>% length
-#953 new; 45 handcoded
+#952 new; 46 handcoded
 
 #fix groups for display clarity
 tmp<-mvotesdf$group%in%c('Republicans','Democrats')
@@ -204,6 +204,7 @@ output(plotdf,tmpname)
 #SUMMARIZE
 
 #because before 1960, sample is sparse
+#and this is irrelevant for 'standard story' evaluation
 #set everythign before 1960 to 1960
 tmp<-mvotesdf$year<=1960
 mvotesdf$year[tmp]<-1960
@@ -296,59 +297,59 @@ plotdf<-sumdf
 plotdf$facet<-"estimated"
 plotdf$yhat<-plotdf$mu.loess
 
-#add conventional view
-loopdf<-data.frame(
-  sumcat=c(
-    'Black',
-    'Non-Black Democrats',
-    'Non-Black Republicans'
-  )
-)
-
-# c<-30
-# loopdf$startpoint<-c(
-#   50-c, 
-#   50,
-#   50+0.9*c
+# #add conventional view
+# loopdf<-data.frame(
+#   sumcat=c(
+#     'Black',
+#     'Non-Black Democrats',
+#     'Non-Black Republicans'
+#   )
 # )
-# loopdf$endpoint<-c(
-#   50-c,
-#   50+c,
-#   50+c
-# )
+# 
+# # c<-30
+# # loopdf$startpoint<-c(
+# #   50-c, 
+# #   50,
+# #   50+0.9*c
+# # )
+# # loopdf$endpoint<-c(
+# #   50-c,
+# #   50+c,
+# #   50+c
+# # )
 
-tmpseq.i<-1:nrow(loopdf)
-tmpdf<-lapply(tmpseq.i,function(i) {
-  #i<-2
-  print(i)
-  endyr<-max(plotdf$year)
-  styr<-min(plotdf$year)
-  thisrow<-loopdf[i,]
-  # m<-(thisrow$endpoint-thisrow$startpoint)/(endyr-styr)
-  # b<-thisrow$startpoint - (styr * m)
-  # fun.y<-function(x) {
-  #   m * x + b
-  # }
-  # yhat<-sapply(
-  #   styr:endyr,
-  #   fun.y
-  # )
-  
-  if(thisrow=='Black') {
-    yhat<-20
-  } else if(thisrow=='Non-Black Democrats') {
-    yhat<-genconventional(40,70,80)[-(1),2]
-  } else if(thisrow=='Non-Black Republicans') {
-    yhat<-genconventional(55,80,80)[-(1),2]
-  }
-  data.frame(
-    group=thisrow,
-    year=styr:endyr,
-    mu.loess=yhat,
-    stringsAsFactors=F
-  )
-}) %>% rbind.fill
-tmpdf$facet<-"conventional"
+# tmpseq.i<-1:nrow(loopdf)
+# tmpdf<-lapply(tmpseq.i,function(i) {
+#   #i<-2
+#   print(i)
+#   endyr<-max(plotdf$year)
+#   styr<-min(plotdf$year)
+#   thisrow<-loopdf[i,]
+#   # m<-(thisrow$endpoint-thisrow$startpoint)/(endyr-styr)
+#   # b<-thisrow$startpoint - (styr * m)
+#   # fun.y<-function(x) {
+#   #   m * x + b
+#   # }
+#   # yhat<-sapply(
+#   #   styr:endyr,
+#   #   fun.y
+#   # )
+#   
+#   if(thisrow=='Black') {
+#     yhat<-20
+#   } else if(thisrow=='Non-Black Democrats') {
+#     yhat<-genconventional(40,70,80)[-(1),2]
+#   } else if(thisrow=='Non-Black Republicans') {
+#     yhat<-genconventional(55,80,80)[-(1),2]
+#   }
+#   data.frame(
+#     group=thisrow,
+#     year=styr:endyr,
+#     mu.loess=yhat,
+#     stringsAsFactors=F
+#   )
+# }) %>% rbind.fill
+# tmpdf$facet<-"conventional"
 
 
 plotdf<-rbind.fill(
@@ -410,16 +411,16 @@ g.tmp<-ggplot(
   #   ),
   #   alpha=0.25
   # ) +
-  scale_color_manual(
-    name="",
-    values=tmpcolors
-  ) +
+scale_color_manual(
+  name="",
+  values=tmpcolors
+) +
   xlab("") +
   ylab("% Voting Punitive\n") +
-  facet_wrap(
-    ~ facet,
-    ncol=1
-  ) +
+  # facet_wrap(
+  #   ~ facet,
+  #   ncol=1
+  # ) +
   theme_bw() +
   theme(
     legend.position = 'bottom',
@@ -432,7 +433,7 @@ ggsave(
   plot=g.tmp,
   filename=tmpname,
   width=5,
-  height=8
+  height=5
 )
 output(plotdf,tmpname)
 
@@ -510,4 +511,139 @@ output(plotdf,tmpname)
 
 #########################################################
 #########################################################
+
+#SPLIT SOUTH FROM NON-SOUTH
+#focusing just on non-black
+
+
+#split the sample by 1964 eleciton returns
+#goldwater states, all other states, very liberal states
+require(rvest)
+tmpurl<-'https://en.wikipedia.org/wiki/1964_United_States_presidential_election'
+myhtml <- read_html(tmpurl) %>% html_nodes('table')
+tmpdf <- myhtml[[15]] %>% html_table
+tmpdf <- tmpdf[-(1),c(1,15)] #this is the margin in favor of LBJ
+names(tmpdf)<-c('statename','lbjmargin')
+tmpdf$lbjmargin<-str_replace_all(tmpdf$lbjmargin,"\\,","")
+tmpnegative<-str_detect(tmpdf$lbjmargin,"\\−")
+tmpdf$lbjmargin<-str_replace(tmpdf$lbjmargin,"\\−","")
+tmpdf$lbjmargin<-as.numeric(tmpdf$lbjmargin)
+tmpdf$lbjmargin[tmpnegative]<- -1 * tmpdf$lbjmargin[tmpnegative]
+sdf<-data.frame(
+  statename=state.name,
+  state_abbrev=state.abb
+)
+tmp<-tmpdf$statename%in%sdf$statename
+tmpdf$statename[!tmp] #just DC missing
+tmpdf<-merge(
+  tmpdf,
+  sdf
+)
+tmpdf$state_1964 <- NA
+#5 goldwater states, 5 most liberal states, and the remainder
+tmpdf<-tmpdf[order(tmpdf$lbjmargin),]
+nrow(tmpdf)
+tmpdf$state_1964[1:5]<-'Goldwater'
+tmpdf$state_1964[6:45]<-'LBJ (Rest)'
+tmpdf$state_1964[46:50]<-'LBJ (Top 5)'
+tmpdf$state_1964 <- factor(tmpdf$state_1964,c('Goldwater','LBJ (Rest)','LBJ (Top 5)'))
+mvotesdf <- merge(
+  mvotesdf,
+  tmpdf[,c('state_abbrev','state_1964')],
+  all.x=T,
+  by=c('state_abbrev')
+)
+
+sumdf<-mvotesdf[
+  !is.na(punitive) &
+    !is.na(group) & 
+    group!='Black'
+  ,
+  .(
+    punitive_pct = 100 * mean(punitive_vote,na.rm=T),
+    punitive_votes = length(unique(congress_rollnumber))
+  )
+  ,
+  by=c(
+    #"group",
+    'state_1964',
+    "year"
+  )
+]
+setorder(sumdf,year)#group,year)
+
+sumdf<-by(sumdf,sumdf$state_1964,function(df) { #list(sumdf$group,sumdf$state_goldwater),function(df) {
+  #df<-sumdf[sumdf$group=="Democrats",]
+  tmp<-loess(
+    data=df,
+    punitive_pct ~ year
+  ) %>% predict(df$year,se=T)
+  df$mu.loess<-tmp$fit
+  df$se.loess<-tmp$se.fit
+  df
+}) %>% rbind.fill %>% data.table
+
+plotdf<-sumdf
+plotdf$facet<-"estimated"
+plotdf$yhat<-plotdf$mu.loess
+
+plotdf <- plotdf[plotdf$state_1964%in%c('Goldwater','LBJ (Top 5)')]
+
+g.tmp <- ggplot(
+  plotdf,
+  aes(
+    x=year,
+    y=yhat,
+    #ymin=mu.loess - 1.96*se.loess,
+    #ymax=mu.loess + 1.96*se.loess,
+    group=state_1964,
+    linetype=state_1964#,
+    #color=group
+  )
+) +
+  geom_line(size=1) +
+  scale_color_manual(
+    name="",
+    values=tmpcolors
+  ) +
+  scale_linetype_discrete(
+    name=""
+  ) +
+  #facet_wrap( ~ group) +
+  xlab("") +
+  ylab("% Voting Punitive\n") +
+  # facet_wrap(
+  #   ~ facet,
+  #   ncol=1
+  # ) +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',
+    legend.direction = 'horizontal',
+    panel.spacing.x = unit(2,'lines')
+  )
+
+setwd(outputdir)
+tmpname<-"fig_voting_levels_south.png"
+ggsave(
+  plot=g.tmp,
+  filename=tmpname,
+  width=4,
+  height=4
+)
+output(plotdf,tmpname)
+
+#for calculations
+tmpdf<-spread(
+  plotdf[,c('year','state_1964','mu.loess')],
+  state_1964,
+  mu.loess
+)
+tmpdf$diff <- tmpdf$Goldwater - tmpdf$`LBJ (Top 5)`
+tmpdf$diff
+goldwater_increase <- (tmpdf$Goldwater[tmpdf$year==2018] - tmpdf$Goldwater[tmpdf$year==1960])/
+  tmpdf$Goldwater[tmpdf$year==1960] #105% increase
+lbj_increase <- (tmpdf$`LBJ (Top 5)`[tmpdf$year==2018] - tmpdf$`LBJ (Top 5)`[tmpdf$year==1960])/
+  tmpdf$`LBJ (Top 5)`[tmpdf$year==1960] #84% increase
+lbj_increase/goldwater_increase #80% of the goldwater increase happens in the lbj case, too
 

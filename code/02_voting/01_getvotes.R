@@ -229,7 +229,6 @@ allvotesdf$bill_type[tmp]<-NA
 #take a look at bill_type
 tmptab<-table(allvotesdf$bill_type,useNA = 'a')
 tmptab/sum(tmptab) #about 30% are NA's.. 
-#can return to this later, but for now continue
 
 #########################################################
 #########################################################
@@ -363,10 +362,10 @@ tmpvars<-c(
   "crs_policy_area"
 )
 
-table(fulldf$crs_policy_area[tmp]) #mostly crime and law enforcement
-table(fulldf$issue_codes[tmp]) #judiciary and narcotics
-table(fulldf$peltzman_codes[tmp]) #domestic social policy/regulation
-table(fulldf$clausen_codes[tmp]) #civil liberties
+table(fulldf$crs_policy_area[tmp]) %>% sort #mostly crime and law enforcement
+table(fulldf$issue_codes[tmp]) %>% sort #judiciary and narcotics
+table(fulldf$peltzman_codes[tmp]) %>% sort #domestic social policy/regulation
+table(fulldf$clausen_codes[tmp]) %>% sort #civil liberties
 
 #peltzman and clausen seem too general
 #instead, we will look at crime/law enforcement
@@ -395,6 +394,14 @@ fulldf$punitivevote<-tmp
 #limit the data to the postwar period
 tmp<-year(fulldf$date)>=1945
 fulldf<-fulldf[tmp,]
+
+#########################################################
+#########################################################
+
+#can we identify a woT sample
+tmp<-year(fulldf$date)>2001 & 
+  fulldf$punitivevote
+sum(fulldf$punitivevote)
 
 #########################################################
 #########################################################

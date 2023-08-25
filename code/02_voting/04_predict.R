@@ -289,6 +289,28 @@ tmp<-(mvotesdf$punitive==1 &
      mvotesdf$vote==0)
 mvotesdf$punitive_vote[tmp]<-1
 
+#get region
+mvotesdf$state_abbrev
+tmpdf<-data.frame(
+  state_abbrev=state.abb,
+  state_region=state.region,
+  stringsAsFactors=F
+)
+tmpdf$state_south <- as.numeric(tmpdf$state_region=='South')
+tmpdf$state_goldwater <- tmpdf$state_abbrev%in%c(
+  'AZ','LA','MS','AL','GA','SC'
+)
+mvotesdf<-merge(
+  mvotesdf,
+  tmpdf,
+  by='state_abbrev',
+  all.x=T
+)  
+
+#the presidents' votes aren't included; but we want to omit them anyway
+mvotesdf$bioname[is.na(mvotesdf$state_south)] %>% unique
+mvotesdf<-mvotesdf[!is.na(mvotesdf$state_south),]
+
 #########################################################
 #########################################################
 

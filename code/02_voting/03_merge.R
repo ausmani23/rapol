@@ -92,7 +92,6 @@ mvotesdf<-merge(
 )
 nrow(unique(mvotesdf))==nrow(mvotesdf)
 
-
 #merge member info into mvotes
 tmporder<-order(
   membersdf$icpsr,
@@ -116,6 +115,17 @@ mvotesdf<-merge(
   by=c("congress","icpsr")
 )
 nrow(unique(mvotesdf))==nrow(mvotesdf)
+
+#########################################################
+#########################################################
+
+#classify WoT votes
+tmp <- allvotesdf$date>ymd('2001-09-11') & 
+  (
+    (str_detect(allvotesdf$vote_desc,'terror') & 
+       !is.na(allvotesdf$vote_desc))
+  ) 
+#there are only 8 of these, no way they make a difference
 
 #########################################################
 #########################################################
@@ -144,7 +154,7 @@ write.csv(
 # decades<-unique(allvotesdf$decade)
 # sampledf<-lapply(decades,function(thisdecade) {
 #   #thisdecade<-decades[1]
-#   tmp<-allvotesdf$decade==thisdecade & 
+#   tmp<-allvotesdf$decade==thisdecade &
 #     is.na(allvotesdf$punitive) #one that we haven't coded
 #   sample_n(allvotesdf[tmp,],ifelse(sum(tmp)>10,10,sum(tmp)))
 # }) %>% rbind.fill
@@ -156,5 +166,3 @@ write.csv(
 #   sampledf,
 #   'mvotesdf_sample.csv'
 # )
-
-

@@ -249,8 +249,8 @@ tmplabels<-c(
   "Blacks",
   "Protests",
   "Riots",
-  "Violent Crime Rate",
-  "Homicide Rate"
+  "Violent Crime",
+  "Homicide"
 )
 plotdf$var<-factor(
   plotdf$var,
@@ -262,14 +262,22 @@ tmpcolors<-c(
   'blue',
   'black',
   'grey',
-  'purple',
-  'darkgreen'
+  'black',
+  'grey'
 )
 names(tmpcolors)<-levels(plotdf$var)
 
+#split into two facets
+tmp<-plotdf$var%in%c('Protests','Riots')
+plotdf$facet[tmp]<-'Protests'
+plotdf$facet[!tmp]<-'Crime'
+tmp<-plotdf$var%in%c('Whites','Blacks')
+plotdf$facet <- factor(plotdf$facet,c('Protests','Crime'))
+plotdf$facet[tmp]<-NA
+tmpdf<-plotdf[is.na(plotdf$facet),]; tmpdf$facet<-NULL
 
 g.tmp<- ggplot(
-  plotdf,
+  plotdf[!is.na(plotdf$facet),],
   aes(
     x=year,
     y=val,
@@ -282,9 +290,25 @@ g.tmp<- ggplot(
     size=1.5, 
     se=FALSE
   ) +
+  facet_wrap(
+    ~ facet 
+  ) +
+  geom_smooth(
+    data=tmpdf,
+    se=F,
+    size=1.5
+  ) +
   scale_color_manual(
     name="",
-    values=tmpcolors
+    values=tmpcolors,
+    limits = c(
+      'Blacks',
+      'Whites',
+      'Protests',
+      'Riots',
+      'Violent Crime',
+      'Homicide'
+    )
   ) +
   # scale_linetype_manual(
   #   name="",
@@ -305,12 +329,18 @@ setwd(outputdir)
 ggsave(
   plot=g.tmp,
   filename=tmpname,
-  width=8,
+  width=10,
   height=6
 )
 output(plotdf,tmpname)
 
+#how long is lag between protests/riots peak
+#and  punitiveness peak
+plotdf$facet<-NULL
+tmpdf<-spread(plotdf,var,val)
+tmpdf$year[sapply(tmpdf,which.max)]
+
 
 #########################################################
 #########################################################
-A
+

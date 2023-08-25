@@ -97,6 +97,9 @@ median.redistricting<-median(
   redf2$newds[redf2$newds>0 & !is.na(redf2$newds)]
 )
 
+#add year2, for estaimation of year trend
+beodf$year2<-beodf$year-1990 
+
 #output for graph of beo rep
 tmpvars<-c(
   "state_alpha2",
@@ -148,7 +151,6 @@ getbootstats<-function(x,i,mydf,myformula,b.ols) {
 
 #IDENTIFY VARS
 #get dddf dataset
-
 setwd(metadir); dir()
 ddvarsdf<-read.csv(
   '03_dind_ddvarsdf.csv',
@@ -178,20 +180,63 @@ ddmodsdf<-read.csv(
   stringsAsFactors=F
 )
 
-#each dv, each mod
-#estimate normally, 
-#via aggregation, 
-#and via boostrap
+#full space
 ddmodsdf<-expand.grid(
   dv=dvs,
-  spec=ddmodsdf$spec,
+  spec=c(ddmodsdf$spec,'statetrend'),
   method=c(
     "normal",
     "aggregation",
     "bootstrap"
   ),
   stringsAsFactors=F
-)
+) 
+
+#identify preferred mod
+tmp<-ddmodsdf$dv%in%c(
+  'officers_pcap',
+  'imprt_t_jur',
+  'welfbenefits'
+) &
+  ddmodsdf$spec=='divtrend' &
+  ddmodsdf$method=='normal'
+prefmodsdf<-ddmodsdf[tmp,]
+
+#don't estimate the whole space
+#loop through each condition
+#keeping all other choices from prefmods
+tmpseq.i<-seq_along(names(prefmodsdf))
+ddmodsdf<-lapply(tmpseq.i,function(i) {
+  #i<-1
+  thisname<-names(prefmodsdf)[i]
+  othnames<-names(prefmodsdf)[-i]
+  #take thisname from modsdf
+  #take othnames from prefmodsdf/tmpdf
+  thisperm<-lapply(thisname,function(x)
+    unique(ddmodsdf[[x]])
+  )
+  othperms<-lapply(othnames,function(x)
+    unique(prefmodsdf[[x]])
+  )
+  allperms<-append(
+    thisperm,
+    othperms
+  )
+  #return this
+  returndf<-expand.grid(allperms,stringsAsFactors = F)
+  names(returndf)<-c(thisname,othnames)
+  returndf
+}) %>% rbind.fill %>% unique
+
+# #add custom rows
+# newrow<-data.frame(
+#   dv='welfbenefits',
+#   spec='controls',
+#   method='normal'
+# )
+# ddmodsdf<-rbind(ddmodsdf,newrow) %>% unique
+
+#also estimate the key mods by aggregation and bootstrap
 ddmodsdf$mname<-apply(
   ddmodsdf,1,paste0,collapse="."
 )
@@ -203,7 +248,8 @@ ddmodsdf$mname<-apply(
 
 tmpseq.i<-1:nrow(ddmodsdf)
 ddforms<-lapply(tmpseq.i,function(i) {
-  #i<-136 
+  
+  #i<-15
   thisrow<-ddmodsdf[i,]
   this.spec<-thisrow$spec
   thisdv<-thisrow$dv
@@ -226,36 +272,56 @@ ddforms<-lapply(tmpseq.i,function(i) {
     idterms<-c("factor(state_alpha2)","factor(year)") %>%
       paste0(collapse=" + ")
   }
-  if(this.spec=="newds") {
+  if(this.spec%in%c("newds")) {
     ddterms<-c("t.post.t:newds")
   }
   #controls
   tmp<-ddvarsdf$class%in%c("control")
   controls<-ddvarsdf$varname[tmp]
-  if(this.spec%in%c("simple","fes")) {
+  if(
+    this.spec%in%c(
+      "simple",
+      "fes",
+      "diff",
+      "newds",
+      "divtrend",
+      "regtrend",
+      "statetrend"
+    )
+  ) {
     controlterms<-c("")
   } else if (this.spec=="lags") {
     controlterms<-c(
-      paste0("L.",thisdv),
-      paste0("L.",controls)
-    ) %>%
-      paste0(collapse=" + ")
-  } else {
+      paste0("L.",thisdv)#,
+      #paste0("L.",controls)
+    ) 
+  } else if (this.spec=="controls") {
     controlterms<-
       paste0("L.",controls) %>%
       paste0(collapse=" + ")
   }
   
-  if(this.spec=="divtrend") {
+  #default is divisionXyear trends
+  if(this.spec%in%c(
+    "divtrend",
+    "diff",
+    "newds",
+    "lags",
+    "controls")
+  ) {
     controlterms<-paste0(
       controlterms," + year:division"
     )
-  }
-  if(this.spec=="regtrend") {
+  } else if(this.spec=="regtrend") {
     controlterms<-paste0(
       controlterms," + year:region"
     )
+  } else if(this.spec=='statetrend') {
+    controlterms<-paste0(
+      controlterms," + year2:factor(state_alpha2)"
+    )
   }
+  
   
   #put form together
   rhs<-paste(
@@ -283,30 +349,27 @@ names(ddforms)<-ddmodsdf$mname
 ########################################################
 ########################################################
 
-#GENERATE DF
-#per dv X boot or not
-ddsampsdf<-expand.grid(
-  dv=dvs,
-  method=unique(ddmodsdf$method),
-  stringsAsFactors=F
-)
+#GENERATE DF 
+#for each form
+
+ddsampsdf <- ddmodsdf
 ddsampsdf$sampname<-apply(
   ddsampsdf,1,paste0,collapse="."
 )
-
 tmpseq.i<-1:nrow(ddsampsdf)
 ddsamps<-lapply(tmpseq.i,function(i) {
   #get cols
-  #i<-1
+  #i<-21
   print(i)
   thisrow<-ddsampsdf[i,]
   thisdv<-thisrow$dv
+  thisspec<-thisrow$spec
   thismethod<-thisrow$method
   #this is the core df
   fulldf<-beodf
   #if not, normal
   #these are the cols we want
-  allforms<-ddforms[ddmodsdf$dv==thisdv]
+  allforms<-ddforms[ddmodsdf$dv==thisdv & ddmodsdf$spec==thisspec]
   allvars<-lapply(allforms,all.vars) %>%
     unlist %>%
     unique
@@ -318,14 +381,14 @@ ddsamps<-lapply(tmpseq.i,function(i) {
   }
   tmprows<-complete.cases(fulldf[,allvars]) &
     beodf$year<=1996 & #cut analysis in 1996
-    beodf$year!=t.year #not treatment year
+    beodf$year!=t.year #exclude treatment year
   #these are extra vars
   idvars<-c(
     "state_alpha2",
     "year"
   )
   extravars<-c(
-    #####
+    'post.t'
   )
   tmpcols<-c(
     idvars,
@@ -378,7 +441,7 @@ ddsampsdf<-merge(
 
 this.sequence<-seq_along(ddforms)
 tmpoutput<-lapply(this.sequence,function(i) {
-  #i<-which(ddmodsdf$method=="bootstrap")[1]
+  #i<-14
   #progress
   print(
     paste(
@@ -393,7 +456,8 @@ tmpoutput<-lapply(this.sequence,function(i) {
   this.spec<-ddmodsdf$spec[i]
   thismname<-ddmodsdf$mname[i]
   tmprow<-ddsampsdf$dv==thisdv & 
-    ddsampsdf$method==thismethod
+    ddsampsdf$method==thismethod &
+    ddsampsdf$spec==this.spec
   this.sampname<-ddsampsdf$sampname[tmprow]
   thisdf<-ddsamps[[this.sampname]]
   
@@ -523,7 +587,7 @@ tmpoutput<-lapply(this.sequence,function(i) {
     
     ###THIS GOES TO PVAL.CLASS
     if(t.ols>t.thresh[1]) {
-       pval.class<-"at alpha=0.01"
+      pval.class<-"at alpha=0.01"
     } else if(t.ols>t.thresh[2]) {
       pval.class<-"at alpha=0.05"
     } else if(t.ols>t.thresh[3]) {
@@ -575,13 +639,18 @@ ddfinaldf<-merge(
   ddestsdf,
   ddmodsdf,
   by="mname"
-)
+) %>% unique
+
+table(ddestsdf$mname)
+table(ddmodsdf$mname)
+ddmodsdf$mname%in%ddfinaldf$mname
 
 #standardize
 tmp<-sapply(dvs,function(thisdv) {
   #thisdv<-dvs[1]
   tmp<-ddsampsdf$dv==thisdv &
-    ddsampsdf$method=="normal"
+    ddsampsdf$method=="normal" &
+    ddsampsdf$spec=='divtrend'
   this.sampname<-ddsampsdf$sampname[tmp]
   thisdf<-ddsamps[[this.sampname]]
   tapply(

@@ -376,10 +376,23 @@ plotdf<-lapply(tmpseq.i,function(i) {
 
   tmpdist<-simMat[predictdf$race==1,] - 
     simMat[predictdf$race==2,]
-  returndf<-summarize.distribution2(tmpdist)
-  returndf$dimension<-thisdimension
-  row.names(returndf)<-NULL
-  returndf
+  returndf1<-summarize.distribution2(tmpdist)
+  returndf1$dimension<-thisdimension
+  row.names(returndf1)<-NULL
+  returndf1$gap <- 'blackwhite'
+  
+  ###SUM BLACK ELITE - BLACK NONELITE DIFFERENCE
+  tmpdist<-simMat[predictdf$race==2 & predictdf$ed==4,] - 
+    simMat[predictdf$race==2 & predictdf$ed==1,]
+  returndf2<-summarize.distribution2(tmpdist)
+  returndf2$dimension<-thisdimension
+  row.names(returndf2)<-NULL
+  returndf2$gap <- 'elitenonelite_black'
+  
+  returndf<-rbind(
+    returndf1,
+    returndf2
+  )
   
 }) %>% rbind.fill
 
@@ -562,6 +575,13 @@ plotdf<-lapply(tmpseq.i,function(i) {
 #   tmplabels
 # )
 # 
+
+plotdf$gap<-factor(
+  plotdf$gap,
+  c('blackwhite','elitenonelite_black'),
+  c('Black-White Gap','Black Elite Gap')
+)
+
 tmplevels<-c(
   "anxiety",
   "mistrust",
@@ -634,12 +654,12 @@ g.tmp <- ggplot(
   scale_color_discrete(
     name=""
   ) +
-  ylab("\nAdjusted White-Black Gap") +
+  ylab("\nEstimated Gap") +
   xlab("") +
   coord_flip() +
-  # facet_grid(
-  #   dimension ~ race2
-  # ) + 
+  facet_grid(
+     ~ gap
+  ) +
   theme_bw()
   # ) +
   # theme_bw(
@@ -650,11 +670,11 @@ g.tmp <- ggplot(
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
-  filename='fig_po_effectofrace.png',
-  width=6,
+  filename='fig_po_effects.png',
+  width=8,
   height=3
 )
-output(plotdf,'fig_po_effectofrace.png')
+output(plotdf,'fig_po_effects.png')
 
 #########################################################
 #########################################################
