@@ -1,6 +1,6 @@
-# The Racial Politics of the Punitive Turn
+# The Racial Politics of Mass Incarceration
 
-This repository contains replication code for 'The Racial Politics of the Punitive Turn'. Numbers indicate that files must be run in a particular order.
+This repository contains replication code for 'The Racial Politics of Mass Incarceration'. Numbers indicate that files must be run in a particular order.
 
 Note that because the paper is not based on a single result but many, there is no single replication file. We also do not store any of the original inputs on this repository. Please contact us for further information about how to replicate a specific result. 
 
