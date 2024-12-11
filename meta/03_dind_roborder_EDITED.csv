@@ -1,20 +1,21 @@
-facet,y,ydisp,order
-dd,Bivariate,Bivariate,1
-dd,FEs Only,FEs Only,2
-dd,Aggregation,Aggregation,3
-dd,Bootstrap,Bootstrap,4
-dd,RD X Districts,RD X Districts,5
-dd,Division X Time,Division X Time,6
-dd,Region X Time,Region X Time,7
-dd,First Differences,First Differences,8
-dd,Lag DV,Lag DV,9
-dd,Spending,Spending,10
-reg,Bivariate,Bivariate,11
-reg,Random-Effects,Random-Effects,12
-reg,Pooled,Pooled,13
-reg,Division X Time,Division X Time,14
-reg,Region X Time,Region X Time,15
-reg,Unit Roots,Unit Roots,16
-reg,Enns,Enns,17
-reg,Five-Year,Five-Year,18
-reg,Spending,Spending ,19
+facet,y,order
+dd,Aggregation,11
+dd,Bivariate,2
+dd,Bootstrap,10
+dd,Controls,4
+dd,FEs Only,3
+dd,First Differences,9
+dd,Lag DV,7
+dd,Preferred,1
+dd,RD X Districts,8
+dd,Region X Year FE,5
+dd,State X Time,6
+dd,Spending,12
+reg,Bivariate,2
+reg,Default,1
+reg,Division X Year FE,4
+reg,Five-Year,5
+reg,Region X Year FE,3
+reg,Spending,7
+reg,Unit Roots,6
+dd,Jim Crow,13

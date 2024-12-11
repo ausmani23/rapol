@@ -165,8 +165,8 @@ plotdf<-avgdf[tmp,]
 #and make factor 
 plotdf$dimension<-factor(
   plotdf$dimension,
-  levels=c("anxiety","mistrust","punitive"),
-  labels=c("Anxiety","Mistrust","Punitiveness")
+  levels=c("anxiety","punitive","mistrust"),
+  labels=c("Anxiety","Punitiveness","Mistrust")
 )
 roworder<-order(
   plotdf$question,
@@ -212,7 +212,7 @@ plotdf$race<-factor(
   labels=c("White","Black")
 )
 tmpcolors<-c('red','blue')
-names(tmpcolors)<-levels(plotdf$black)
+names(tmpcolors)<-levels(plotdf$race)
 
 #dodge positions
 dodge<-position_dodge(.6)
@@ -283,14 +283,19 @@ ggsave(
 # plotdf<-diffdf[tmp,]
 plotdf<-diffdf
 
+#make this black-white rather than white-black
+plotdf$mu <- plotdf$mu * -1
+plotdf$mu.min <- plotdf$mu.min * -1
+plotdf$mu.max <- plotdf$mu.max * -1
+
 #fix question
 #order by dimension,
 #then mu
 #and make factor 
 plotdf$dimension<-factor(
   plotdf$dimension,
-  levels=c("anxiety","mistrust","punitive"),
-  labels=c("Anxiety","Mistrust","Punitiveness")
+  levels=c("anxiety","punitive","mistrust"),
+  labels=c("Anxiety","Punitiveness","Mistrust")
 )
 neworder<-order(
   plotdf$dimension,
@@ -356,14 +361,14 @@ g.tmp<-ggplot() +
     width=0
   ) + 
   geom_point(
-  data=plotdf,
-  aes(
-    x=question,
-    y=mu,
-    shape=pval.shp
-  ),
-  size=1
-) +
+    data=plotdf,
+    aes(
+      x=question,
+      y=mu,
+      shape=pval.shp
+    ),
+    size=1
+  ) +
   geom_hline(
     yintercept=0,
     linetype='dashed',
@@ -388,7 +393,7 @@ g.tmp<-ggplot() +
     )
   ) +
   xlab("") +
-  ylab("\nWhite-Black Gap") +
+  ylab("\nBlack-White Gap") +
   coord_flip() +  
   facet_grid(
     rows=vars(dimension),
@@ -410,6 +415,198 @@ ggsave(
   height=9
 )
 
+#########################################################
+#########################################################
 
+#extras
+require(boot)
+
+#EXAMINE ROOT CAUSES
+#load data again
+setwd(filesdir); dir()
+finaldf<-fread(
+  '01po_dataframe.csv'
+)
+
+mean_se.boot<-function(x,w) {
+  
+  #df<-finaldf[question=='adeqprotect.time' & race==1]
+  #x<-df$aff
+  #w<-df$weights
+  dist<-boot(
+    data=x,
+    stat=function(x,d) {
+      mean(x[d])
+    },
+    R=1000,
+    weights=w
+  )
+  dist$t %>% as.vector
+  # if(raw==T) {
+  #   return(dist$t)
+  # } else {
+  #   returndf<-summarize.distribution2(
+  #     dist$t
+  #   )
+  #   returndf$N<-length(x)
+  #   returndf$pval<-
+  #     returndf$pval.class<-NA
+  #   return(returndf)
+  # }
+}
+
+summarize.distribution3<-function(ests.distribution) {
+  #ests.distribution<-tmpdist
+  #get quantiles
+  quantiles<-quantile(
+    ests.distribution,
+    c(
+      0.01,
+      0.025,
+      0.05,
+      0.5,
+      0.95,
+      0.975,
+      0.99
+    )
+  )
+  #return mu, mu.min, mu.max
+  mu<-quantiles["50%"]
+  mu.min<-quantiles["2.5%"]
+  mu.max<-quantiles["97.5%"]
+  #and also a pval classification
+  if(mu>=0) {
+    if(quantiles["1%"]>0) {
+      pval.class<-'at alpha=0.01'
+    } else if(quantiles["2.5%"]>0) {
+      pval.class<-'at alpha=0.05'
+    } else if(quantiles["5%"]>0) {
+      pval.class<-'at alpha=0.10'
+    } else {
+      pval.class<-'not sig'
+    }
+  } else if(mu<0) {
+    if(quantiles["99%"]<0) {
+      pval.class<-'at alpha=0.01'
+    } else if(quantiles["97.5%"]<0) {
+      pval.class<-'at alpha=0.05'
+    } else if(quantiles["95%"]<0) {
+      pval.class<-'at alpha=0.10'
+    } else {
+      pval.class<-'not sig'
+    }
+  }
+  # #se
+  # #est of se explodes when lagdv coef is over 1
+  # #so need something that is robust to that scenario
+  # tmpboot<-boot(
+  #   ests.distribution,
+  #   f.sd,
+  #   R=500
+  # )
+  # se<-mean(tmpboot$t)
+  # se.q <- ( quantiles[3] - quantiles[1] ) / 4
+  #SE is less rather than more helpful
+  se<-NA 
+  #se.q<-NA
+  #get something like a two-sided pval test
+  #pval<-ecdf(ests.distribution)(0)
+  #pval<-ifelse(mu<0,(1-pval)*2,pval*2)
+  pval<-NA
+  #return me
+  list(
+    mu=mu,
+    mu.min=mu.min,
+    mu.max=mu.max,
+    se=se,
+    # #se.q=se.q,
+    pval=pval,
+    pval.class=pval.class
+  )
+}
+
+#combine the two more prisons q's
+tmpdf <- finaldf
+tmpdf[question%in%c('moreprisons.gallup','moreprisons.lat'),question:='moreprisons']
+
+# #summarize rootcause questions
+# sumdf <- tmpdf[
+#   !is.na(race) & 
+#     race%in%c(1,2) &
+#     neut==0 & 
+#     question%in%c(
+#       'useforce.anes',
+#       'moreprisons',
+#       'moreimppunish.gallup'
+#     )
+#   ,
+#   .(
+#     index=1:1000,
+#     mu=mean_se.boot(
+#       100 * neg,
+#       weights
+#     )
+#   )
+#   ,
+#   by=c(
+#     'race',
+#     'question',
+#     'year'
+#   )
+# ][
+#   ,
+#   summarize.distribution3(mu)
+#   ,
+#   by=c(
+#     'race',
+#     'question',
+#     'year'
+#   )
+# ]
+# sumdf[order(race,mu)]
+
+#summarize rootcause questions
+sumdf <- tmpdf[
+  !is.na(race) & 
+    race%in%c(1,2) &
+    neut==0 & 
+    question%in%c(
+      'useforce.anes',
+      'moreprisons',
+      'moreimppunish.gallup'
+    )
+  ,
+  .(
+    index=1:1000,
+    mu=mean_se.boot(
+      100 * neg,
+      weights
+    )
+  )
+  ,
+  by=c(
+    'race',
+    'question'
+  )
+][
+  ,
+  summarize.distribution3(mu)
+  ,
+  by=c(
+    'race',
+    'question'
+  )
+]
+sumdf[order(race,question,mu)]
+
+finaldf[
+  question%in%c(
+    'useforce.anes',
+    'moreprisons.gallup',
+    'moreimppunish.gallup',
+    'moreprisons.lat'
+  ),
+  c('question','year')
+] %>% unique
 
 

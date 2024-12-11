@@ -234,13 +234,13 @@ names(tmpcolors)<-levels(plotdf$race)
 plotdf$dimension<-factor(
   plotdf$dimension,
   levels=c(
-    "punitive",
     "anxiety",
+    "punitive",
     "mistrust"
   ),
   labels=c(
-    "Punitiveness",
     "Anxiety",
+    "Punitiveness",
     "Mistrust"
   )
 )
@@ -304,9 +304,8 @@ output(plotdf,tmpname)
 #key points
 plotdf[race=='Black' & dimension=='Punitiveness' & year%in%c(1957,1989)]
 plotdf[race=='Black' & dimension=='Anxiety']
-
 which.max(plotdf$mu.loess[plotdf$race=='White' & plotdf$dimension=='Anxiety'])
-plotdf[23,]
+
 #########################################################
 #########################################################
 
@@ -358,9 +357,9 @@ diffoutput<-lapply(tmpseq.i,function(i) {
   bwdf<-tmpdf[
     ,
     .(
-      mu=quantile(mu,0.5),
-      mu.min=quantile(mu,0.025),
-      mu.max=quantile(mu,0.975)
+      mu=quantile(mu,0.5,na.rm=T),
+      mu.min=quantile(mu,0.025,na.rm=T),
+      mu.max=quantile(mu,0.975,na.rm=T)
     ),
     by=c(
       'year',
@@ -412,18 +411,19 @@ diffoutput<-lapply(tmpseq.i,function(i) {
 
 #plot bw difference
 plotdf<-lapply(diffoutput,function(x) x$bwdf) %>% rbind.fill
-plotdf<-plotdf[plotdf$type=="loess",]
+plotdf<-plotdf[plotdf$type=='loess',]
 
+#dimension
 plotdf$dimension<-factor(
   plotdf$dimension,
   levels=c(
-    "punitive",
     "anxiety",
+    "punitive",
     "mistrust"
   ),
   labels=c(
-    "Punitiveness",
     "Anxiety",
+    "Punitiveness",
     "Mistrust"
   )
 )

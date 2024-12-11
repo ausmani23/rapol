@@ -43,7 +43,7 @@ lapply(mods,summary)
 
 #set seed
 set.seed(23)
-merTools_sims<-500
+merTools_sims<-100
 
 #########################################################
 #########################################################
@@ -54,7 +54,7 @@ merTools_sims<-500
 #and/or models that did didn't converge
 
 #identify prefmods
-setwd(fileesdir)
+setwd(filesdir)
 regmodsdf<-read.csv(
   '01po_regmods_info.csv',
   stringsAsFactors=F
@@ -269,24 +269,23 @@ fulloutput<-lapply(tmpseq.i,function(i) {
   #NB: this is very computationally-intensive,
   #so we use parallel computation to speed it up a bit
   mpredictdf<-predictdf
-  numCores<-getDoParWorkers()
-  registerDoParallel(cores=numCores)
-  st<-proc.time()
-  tmpoutput<-merTools::predictInterval(
+  numCores <- parallel::detectCores() - 1  
+  registerDoParallel(cores = numCores)
+  st <- proc.time()
+  tmpoutput <- merTools::predictInterval(
     thismod,
-    newdata=mpredictdf,
-    which="full",
-    level=0.95,
-    type='probability',
-    include.resid.var=F,
-    n.sims=merTools_sims, 
-    #.parallel = T,
-    #100 X 200k yields about 20 million obs
-    #1000 reps and we're talking 200 million
-    returnSims=T
+    newdata = mpredictdf,
+    which = "full",
+    level = 0.95,
+    type = "probability",
+    include.resid.var = FALSE,
+    n.sims = merTools_sims,
+    .parallel = TRUE,  # Enable parallel processing if supported
+    returnSims = TRUE
   )
-  timetorun<-proc.time() - st
+  timetorun <- proc.time() - st
   print(timetorun)
+  stopImplicitCluster()
 
   simMat<-attr(tmpoutput,"sim.results")
   simMat<-apply(simMat,1,thismod@resp$family$linkinv)
@@ -300,7 +299,7 @@ fulloutput<-lapply(tmpseq.i,function(i) {
     "mu",
     gathcols
   ) %>% data.table
-  mpredictdf$rep<-str_replace(mpredictdf$rep,"X","")
+  mpredictdf[,rep:=str_replace(rep,"X","")]
   #collapse for race year
   mpredictdf_ry<-mpredictdf[
     ,

@@ -66,7 +66,8 @@ tmp<-dddf$dv%in%c(
 )
 tmp<-tmp & 
   dddf$spec%in%c("divtrend") &
-  dddf$method=="normal"
+  dddf$method=="normal" &
+  dddf$sample=="full"
 dddf$pref<-F
 dddf$pref[tmp]<-T
 
@@ -210,7 +211,7 @@ tmp<-finaldf$dv%in%c(
 )
 tmp2<-(
   finaldf$approach=='dd' & 
-  finaldf$pref
+    finaldf$pref
 )
 # tmp3<-(
 #   finaldf$approach=="expectation"
@@ -310,11 +311,12 @@ plotdf
 #also export welfbenefits
 tmp<-finaldf$dv=="welfbenefits" &
   finaldf$spec%in%c(
-    "divtrend",
-    "racialthreat"#,
+    "divtrend"#,
+    #"racialthreat"#,
     #"controls"
   ) &
-  finaldf$method=="normal"
+  finaldf$method=="normal" &
+  finaldf$sample=="full"
 plotdf<-finaldf[tmp,]
 
 plotdf$dv <- factor(
@@ -394,7 +396,6 @@ tmp<-finaldf$dv=="welfbenefits" &
   finaldf$approach!='expectation'
 plotdf<-finaldf[tmp,]
 plotdf[plotdf$mu<0,]
-
 
 #########################################################
 #########################################################
@@ -567,7 +568,30 @@ tmpdf<-read.csv(
 )
 tmpdf<-data.table(tmpdf)
 plotdf<-tmpdf[
-  year%in%1980:2000,
+  year%in%1980:2000 #&
+    # state_alpha2%in%c(
+    #   'MO', 
+    #   'AR', 
+    #   'LA', 
+    #   'OK', 
+    #   'TX', 
+    #   'AL', 
+    #   'KY', 
+    #   'MS', 
+    #   'TN', 
+    #   'DE', 
+    #   'FL', 
+    #   'GA', 
+    #   'MD', 
+    #   'NC', 
+    #   'SC', 
+    #   'VA', 
+    #   'WV', 
+    #   'AZ', 
+    #   'KS', 
+    #   'NM'
+    # )
+  ,
   .(beopct=mean(beopct_all)),
   by=c("year","t")
 ]

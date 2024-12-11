@@ -88,7 +88,6 @@ output <- function(df,tmpname) {
 #########################################################
 #########################################################
 
-
 #identify prefmods
 setwd(filesdir); dir()
 regmodsdf<-read.csv(
@@ -98,7 +97,7 @@ regmodsdf<-read.csv(
 
 #choose the pref models
 prefmodsdf<-by(regmodsdf,regmodsdf$dimension,function(df) {
-  #df<-regmodsdf[regmodsdf$dimension=="all",]
+  #df<-regmodsdf[regmodsdf$dimension=="mistrust",]
   tmp<-df$warnings==""
   if(sum(tmp)>0) {
     tmpdf<-df[tmp,]
@@ -293,13 +292,27 @@ tmpseq.i<-seq_along(prefmods)
 plotdf<-lapply(tmpseq.i,function(i) {
   #i<-1
   print(i)
-  thismod<-mods[[i]]
-  thismodname<-names(mods)[i]
+  
+  #get params
+  thismod<-prefmods[[i]]
+  thismodname<-names(prefmods)[i]
   thisdimension<-str_extract(
     thismodname,
     "all|anxiety|punitive|mistrust"
   )
   
+  #override w/ full model
+  tmp <- str_detect(
+    names(mods),
+    'pref'
+  ) &
+    str_detect(
+      names(mods),
+      thisdimension
+    )
+  thismod<-mods[tmp][[1]]
+  thismodname<-names(thismod)
+
   #############
   
   #set up predictdf
@@ -374,8 +387,8 @@ plotdf<-lapply(tmpseq.i,function(i) {
   
   ###SUM BLACK-WHITE DIFFERENCE
 
-  tmpdist<-simMat[predictdf$race==1,] - 
-    simMat[predictdf$race==2,]
+  tmpdist<-simMat[predictdf$race==2,] - 
+    simMat[predictdf$race==1,]
   returndf1<-summarize.distribution2(tmpdist)
   returndf1$dimension<-thisdimension
   row.names(returndf1)<-NULL
@@ -396,186 +409,6 @@ plotdf<-lapply(tmpseq.i,function(i) {
   
 }) %>% rbind.fill
 
-
-#DEPRECATED..
-
-# #FIG 2 - AGE, ED AND SEX, BY RACE
-# #b/c of interactions, main coefs are not sufficient
-# 
-# stop()
-# 
-# predictdf<-expand.grid(
-#   race2=c(1,2),
-#   gender=c(1,2),
-#   ed=c(1,2,3,4),
-#   age=c(1,2,3,4)
-# )
-# 
-# #ensure it works whether race or race2
-# predictdf$race<-predictdf$race2
-# 
-# #loop through and predictdf
-# tmpseq.i<-seq_along(prefmods)
-# plotdf<-lapply(tmpseq.i,function(i) {
-#   #i<-3
-#   print(i)
-#   thismod<-mods[[i]]
-#   thismodname<-names(mods)[i]
-#   thisdimension<-str_extract(
-#     thismodname,
-#     "all|anxiety|punitive|mistrust"
-#   )
-#   
-#   #############
-#   
-#   #set up predictdf
-#   
-#   #get mrefs
-#   mrefs<-get.medianrefs(thismod)
-#   predictdf$year<-mrefs$year
-#   predictdf$question<-mrefs$question
-#   predictdf$division<-mrefs$division
-#   predictdf$row<-1:nrow(predictdf)
-#   
-#   #now, add all interactions
-#   loopdf<-expand.grid(
-#     v1=c(
-#       "race",
-#       "race2"
-#     ),
-#     v2=c(
-#       "question",
-#       "age",
-#       "ed",
-#       "gender",
-#       "year",
-#       "region",
-#       "division",
-#       "state_alpha2"
-#     ),
-#     stringsAsFactors=F
-#   )
-#   tmpseq.j<-1:nrow(loopdf)
-#   for(j in tmpseq.j) {
-#     #print(i)
-#     #j<-1
-#     thisrow<-loopdf[j,]
-#     newname<-paste0(
-#       thisrow$v1,
-#       "X",
-#       thisrow$v2
-#     )
-#     #make these all distinct categories
-#     predictdf[[newname]]<-paste0(
-#       predictdf[[thisrow$v1]],
-#       "_",
-#       predictdf[[thisrow$v2]]
-#     )
-#   }
-#   #add others
-#   predictdf$raceXdivisionXyear<-paste0(
-#     predictdf$race,"_",
-#     predictdf$division,"_",
-#     predictdf$year
-#   )
-#   predictdf$raceXedXyear<-paste0(
-#     predictdf$race,"_",
-#     predictdf$ed,"_",
-#     predictdf$year
-#   )
-#   
-#   #get predictions w/ merTools
-#   tmpoutput<-merTools::predictInterval(
-#     thismod,
-#     newdata=predictdf,
-#     which="full",
-#     level=0.95,
-#     type='probability',
-#     include.resid.var=F,
-#     returnSims=T
-#   )
-#   simMat<-attr(tmpoutput,"sim.results")
-#   simMat<-apply(simMat,1,thismod@resp$family$linkinv)
-#   simMat<-t(simMat) #* 100
-#   
-#   ###KEY DIFFERENCES
-#   
-#   base_vals<-list(
-#     gender=1,
-#     ed=2,
-#     age=2
-#   )
-#   comp_vals<-list(
-#     gender=c(2,1),
-#     ed=c(4,1),
-#     age=c(4,1)
-#   )
-#   loopdf<-expand.grid(
-#     var=c("gender","ed","age"),
-#     race2=c(1,2),
-#     stringsAsFactors=F
-#   )
-#   tmpseq.ii<-1:nrow(loopdf)
-#   tmpdf<-lapply(tmpseq.ii,function(ii) {
-#     #ii<-1
-#     thisrow<-loopdf[ii,]
-#     #which race
-#     tmp<-predictdf$race2==thisrow$race2
-#     #and which other rows
-#     tmpvars<-loopdf$var[!loopdf$var%in%thisrow$var] %>%
-#       unique
-#     tmplogicals<-lapply(tmpvars,function(v) predictdf[[v]]==base_vals[[v]]) 
-#     tmp<-tmp & Reduce(f="&",tmplogicals)
-#     #and now get the contrasts vars
-#     tmp_cond1<-tmp & predictdf[[thisrow$var]]==comp_vals[[thisrow$var]][1]
-#     cond1<-simMat[tmp_cond1,]
-#     tmp_cond2<-tmp & predictdf[[thisrow$var]]==comp_vals[[thisrow$var]][2]
-#     cond2<-simMat[tmp_cond2,]
-#     tmpdist<-cond1 - cond2
-#     summarize.distribution2(tmpdist)
-#   }) %>% rbind.fill
-#   returndf<-cbind(loopdf,tmpdf)
-#   returndf$dimension<-thisdimension
-#   returndf
-#   
-# }) %>% rbind.fill
-# 
-# #don't need to plot 'all'
-# tmp<-plotdf$dimension!="all"
-# plotdf<-plotdf[tmp,]
-# 
-# #factors
-# tmplevels<-c(
-#   "gender",
-#   "ed",
-#   "age"
-# )
-# tmplabels<-c(
-#   "Gender",
-#   "Education",
-#   "Age"
-# )
-# plotdf$var<-factor(
-#   plotdf$var,
-#   tmplevels,
-#   tmplabels
-# )
-# 
-# tmplevels<-c(
-#   1,
-#   2
-# )
-# tmplabels<-c(
-#   "Whites",
-#   "Blacks"
-# )
-# plotdf$race2<-factor(
-#   plotdf$race2,
-#   tmplevels,
-#   tmplabels
-# )
-# 
-
 plotdf$gap<-factor(
   plotdf$gap,
   c('blackwhite','elitenonelite_black'),
@@ -584,13 +417,13 @@ plotdf$gap<-factor(
 
 tmplevels<-c(
   "anxiety",
-  "mistrust",
-  "punitive"
+  "punitive",
+  "mistrust"
 ) %>% rev
 tmplabels<-c(
   "Anxiety",
-  "Mistrust",
-  "Punitiveness"
+  "Punitiveness",
+  "Mistrust"
 ) %>% rev
 plotdf$dimension<-factor(
   plotdf$dimension,
@@ -661,47 +494,12 @@ g.tmp <- ggplot(
      ~ gap
   ) +
   theme_bw()
-  # ) +
-  # theme_bw(
-  #   base_family="CM Roman",
-  #   base_size=14
-  # ) 
 
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
   filename='fig_po_effects.png',
   width=8,
-  height=3
+  height=4
 )
 output(plotdf,'fig_po_effects.png')
-
-#########################################################
-#########################################################
-
-# #OUTPUT
-# #output graphlist
-# setwd(outputdir)
-# this.sequence<-seq_along(gs.list)
-# for(i in this.sequence) {
-#   print(
-#     paste0(
-#       "saving ",i," of ",length(this.sequence)
-#     )
-#   )
-#   thiselement<-gs.list[[i]]
-#   ggsave(
-#     filename="tmp.pdf",
-#     plot=thiselement$graph,
-#     width=thiselement$width,
-#     height=thiselement$height
-#   )
-#   #embed font
-#   embed_fonts(
-#     file="tmp.pdf",
-#     outfile=thiselement$filename
-#   )
-#   file.remove(
-#     "tmp.pdf"
-#   )
-# }

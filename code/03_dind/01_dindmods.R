@@ -71,6 +71,8 @@ treated<-c("AL","FL","GA","LA","MS","NC","SC","TX","VA","NY")
 beodf$t<-as.numeric(beodf$state_alpha2%in%treated)
 beodf$t.post.t<-beodf$t * beodf$post.t
 
+#eubanks and fresh ideniti
+
 #we can also interact the treatment variables by 
 #the magnitude of the treatment effect, 
 #which will be the number of new districts created
@@ -189,6 +191,10 @@ ddmodsdf<-expand.grid(
     "aggregation",
     "bootstrap"
   ),
+  sample=c(
+    'full',
+    'jimcrow'
+  ),
   stringsAsFactors=F
 ) 
 
@@ -199,7 +205,8 @@ tmp<-ddmodsdf$dv%in%c(
   'welfbenefits'
 ) &
   ddmodsdf$spec=='divtrend' &
-  ddmodsdf$method=='normal'
+  ddmodsdf$method=='normal' &
+  ddmodsdf$sample=='full'
 prefmodsdf<-ddmodsdf[tmp,]
 
 #don't estimate the whole space
@@ -249,7 +256,7 @@ ddmodsdf$mname<-apply(
 tmpseq.i<-1:nrow(ddmodsdf)
 ddforms<-lapply(tmpseq.i,function(i) {
   
-  #i<-15
+  #i<-2
   thisrow<-ddmodsdf[i,]
   this.spec<-thisrow$spec
   thisdv<-thisrow$dv
@@ -365,6 +372,7 @@ ddsamps<-lapply(tmpseq.i,function(i) {
   thisdv<-thisrow$dv
   thisspec<-thisrow$spec
   thismethod<-thisrow$method
+  thissample<-thisrow$sample
   #this is the core df
   fulldf<-beodf
   #if not, normal
@@ -382,6 +390,33 @@ ddsamps<-lapply(tmpseq.i,function(i) {
   tmprows<-complete.cases(fulldf[,allvars]) &
     beodf$year<=1996 & #cut analysis in 1996
     beodf$year!=t.year #exclude treatment year
+  if(thissample=='jimcrow') {
+    #limit to the jim crow states
+    tmprows<-tmprows & 
+      beodf$statename%in%c(
+        ##mulroy and katzenlson, p. 606
+        'Missouri',
+        'Arkansas',
+        'Louisiana',
+        'Oklahoma',
+        'Texas',
+        'Alabama',
+        'Kentucky',
+        'Mississippi',
+        'Tennesee',
+        'Delaware',
+        'Florida',
+        'Georgia',
+        'Marlyand',
+        'North Carolina',
+        'South Carolina',
+        'Virginia',
+        'West Virginia',
+        'Arizona',
+        'Kansas',
+        'New Mexico'
+      )
+  }
   #these are extra vars
   idvars<-c(
     "state_alpha2",
@@ -441,7 +476,7 @@ ddsampsdf<-merge(
 
 this.sequence<-seq_along(ddforms)
 tmpoutput<-lapply(this.sequence,function(i) {
-  #i<-14
+  #i<-2
   #progress
   print(
     paste(
@@ -454,10 +489,12 @@ tmpoutput<-lapply(this.sequence,function(i) {
   thisdv<-ddmodsdf$dv[i]
   thismethod<-ddmodsdf$method[i]
   this.spec<-ddmodsdf$spec[i]
+  this.sample<-ddmodsdf$sample[i]
   thismname<-ddmodsdf$mname[i]
   tmprow<-ddsampsdf$dv==thisdv & 
     ddsampsdf$method==thismethod &
-    ddsampsdf$spec==this.spec
+    ddsampsdf$spec==this.spec &
+    ddsampsdf$sample==this.sample
   this.sampname<-ddsampsdf$sampname[tmprow]
   thisdf<-ddsamps[[this.sampname]]
   
@@ -650,7 +687,8 @@ tmp<-sapply(dvs,function(thisdv) {
   #thisdv<-dvs[1]
   tmp<-ddsampsdf$dv==thisdv &
     ddsampsdf$method=="normal" &
-    ddsampsdf$spec=='divtrend'
+    ddsampsdf$spec=='divtrend' &
+    ddsampsdf$sample=='full'
   this.sampname<-ddsampsdf$sampname[tmp]
   thisdf<-ddsamps[[this.sampname]]
   tapply(

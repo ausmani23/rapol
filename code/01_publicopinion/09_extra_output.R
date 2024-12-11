@@ -97,11 +97,30 @@ protestdf<-by(protestdf,protestdf$styr,function(df) {
   )
 }) %>% rbind.fill
 
+#load Turchin's dataset
+setwd(datadir); dir()
+tdf <- fread(
+  'american_violence_data_20241016_201046.csv'
+) 
+tdf$year<-lubridate::year(tdf$date)
+tdf <- tdf[
+  year%in%c(1950:2023) &
+    str_detect(subtypes,'race|ethnic')
+  ,
+  .(
+    var='turchin',
+    val=.N
+  )
+  ,
+  by=c('year')
+]
+
 #put this in rate basis by dividing by population
 tmpvars<-c("year","var","val")
 protestdf<-rbind.fill(
   riotsdf[,tmpvars],
-  protestdf[,tmpvars]
+  protestdf[,tmpvars],
+  tdf[,tmpvars,with=F]
 )
 setwd(datadir); dir()
 popdf<-read.csv(
@@ -126,11 +145,13 @@ protestdf$population_census<-NULL
 plotdf<-protestdf
 tmplevels<-c(
   "riots",
-  "protest"
+  "protest",
+  "turchin"
 )
 tmplabels<-c(
-  "Riots",
-  "Protests"
+  "Riots (Olzak)",
+  "Protests (Olzak)",
+  "Political Violence (Turchin)"
 )
 plotdf$var<-factor(
   plotdf$var,
@@ -140,7 +161,8 @@ plotdf$var<-factor(
 
 tmpcolors_riot<-c(
   'grey',
-  'black'
+  'darkgrey',
+  "black"
 )
 names(tmpcolors_riot)<-
   levels(plotdf$var)
@@ -229,6 +251,7 @@ unique(plotdf$var)
 tmp<-plotdf$var%in%c(
   "protest",
   "riots",
+  "turchin",
   "white_estimated_punitiveness",
   "black_estimated_punitiveness",
   "fbivcrt",
@@ -241,14 +264,16 @@ tmplevels<-c(
   "black_estimated_punitiveness",
   "protest",
   "riots",
+  "turchin",
   "fbivcrt",
   "fbihom"
 )
 tmplabels<-c(
-  "Whites",
-  "Blacks",
-  "Protests",
-  "Riots",
+  "White Punitiveness",
+  "Black Punitiveness",
+  "Protests (Olzak)",
+  "Riots (Olzak)",
+  "Political Violence (Turchin)",
   "Violent Crime",
   "Homicide"
 )
@@ -260,18 +285,19 @@ plotdf$var<-factor(
 tmpcolors<-c(
   'red',
   'blue',
-  'black',
   'grey',
-  'black',
-  'grey'
+  'darkgrey',
+  "black",
+  'blue',
+  'darkblue'
 )
 names(tmpcolors)<-levels(plotdf$var)
 
 #split into two facets
-tmp<-plotdf$var%in%c('Protests','Riots')
+tmp<-plotdf$var%in%c('Protests (Olzak)','Riots (Olzak)','Political Violence (Turchin)')
 plotdf$facet[tmp]<-'Protests'
 plotdf$facet[!tmp]<-'Crime'
-tmp<-plotdf$var%in%c('Whites','Blacks')
+tmp<-plotdf$var%in%c('White Punitiveness','Black Punitiveness')
 plotdf$facet <- factor(plotdf$facet,c('Protests','Crime'))
 plotdf$facet[tmp]<-NA
 tmpdf<-plotdf[is.na(plotdf$facet),]; tmpdf$facet<-NULL
@@ -287,14 +313,15 @@ g.tmp<- ggplot(
 ) +
   stat_smooth(
     geom="line",
-    size=1.5, 
-    se=FALSE
+    size=1, 
+    se=FALSE,
+    alpha=0.5
   ) +
   facet_wrap(
     ~ facet 
   ) +
   geom_smooth(
-    data=tmpdf,
+    data=tmpdf[tmpdf$var!='Black Punitiveness',],
     se=F,
     size=1.5
   ) +
@@ -302,19 +329,15 @@ g.tmp<- ggplot(
     name="",
     values=tmpcolors,
     limits = c(
-      'Blacks',
-      'Whites',
-      'Protests',
-      'Riots',
+      #'Black Punitiveness',
+      'White Punitiveness',
+      'Protests (Olzak)',
+      'Riots (Olzak)',
+      'Political Violence (Turchin)',
       'Violent Crime',
       'Homicide'
     )
   ) +
-  # scale_linetype_manual(
-  #   name="",
-  #   values=tmptypes,
-  #   guide=F
-  # ) +
   xlab("") +
   ylab("Normalized Level\n") +
   theme_bw() +
@@ -341,6 +364,4 @@ tmpdf<-spread(plotdf,var,val)
 tmpdf$year[sapply(tmpdf,which.max)]
 
 
-#########################################################
-#########################################################
 

@@ -1,9 +1,9 @@
 spec,propername,order
-controls,Controls Included,1
-simple,Comparison of Means,2
-fes,Fixed Effects Only,3
-diff,First Differences,4
-newds,Interaction with Districts,5
-lags,Lag of DV Included,6
-divtrend,DivisonXYear Trends,7
+divtrend,DivisonXYear Trends,1
+controls,Controls Included,2
+simple,Comparison of Means,3
+fes,Fixed Effects Only,4
+diff,First Differences,5
+newds,Interaction with Districts,6
+lags,Lag of DV Included and Controls,7
 regtrend,RegionXYear Trends,8
