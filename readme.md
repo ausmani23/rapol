@@ -11,7 +11,7 @@ Note that because the paper is not based on a single result but many, there is n
     + extra_output.R - Creates output that is in the paper but which don't fall under any of the headings
     + genconventonal.R - Creates time-series fitting conventional expectations of trends
 
-+ 'code/01_public opinion' contains the code to generate the figures that correspond to Part 4.1 of the paper, 'Public Opinion'.
++ 'code/01_public opinion' contains the code to generate the figures that correspond to Section 3
 
     + 01_group.R - Combines constituent polling datasets
     + 02_prep.R - Recodes combined dataset
@@ -22,11 +22,14 @@ Note that because the paper is not based on a single result but many, there is n
     + 07_predict.R - Combines estimates from the multilevel models with Census population data to generate predictions for each demographic cell between 1956 and 2014 
     + 08_predict_output.R - Summarizes race-specific trends over time (with and without confidence intervals) and the black-white gap (with confidence interval).
     + 09_extra_output.R - Illustrates that trends in punitiveness fit trends in crime rather than trends in civil rights activity or riots
+	+ 10_RandR_summarize.R - Illustrates robustness of descriptive inference to including/excluding respondents who gave neutral or hard-to-classify answers
+	+ 11_RandR_model.R - Runs sparser models
+	+ 12_RandR_modeloutput.R - Illustrates robustness of inferences about trends to using sparser models
     + functions.R - Contains misc functions used in the scripts
     + getcode.R - Crosswalk function
     + getinfo2.R - Wrapper to getcode.R for this data
     
-+ 'code/02_voting' contains the code to generate the figures that correspond to Part 4.2 of the paper, 'Voting Patterns in the House of Representatives'.
++ 'code/02_voting' contains the code to generate the figures that correspond to Section 4
 
     + 01_getvotes.R - Loads a dataset of 45 hand-coded punitive votes in the House, merges this with the universe of house votes since 1945, and uses the issue codes of the hand-coded votes to identify a sample of 'punitive' votes
     + 02_matcheos.R - Loads a dataset with information about all congressmen, merges this with a dataset on black members of congress
@@ -34,7 +37,7 @@ Note that because the paper is not based on a single result but many, there is n
     + 04_predict.R - Trains a model using the average DW-Nominate scores of those voting 'yes' and 'no' in the hand-coded bills to predict the direction of a punitive vote in the not-hand-coded bills
     + 05_summarize.R - Summarizes levels and differences in punitive voting in the house
     
-+ 'code/03_dind' contains the code to generate the figures and results which correspond to Part 4.3 of the paper, 'Black Political Representation'
++ 'code/03_dind' contains the code to generate the figures and results which correspond to Section 5
 
     + 01_dindmods.R - Estimates the effect of federally-mandated redistricting on incarceration and police rates. Runs preferred specifications and a variety of alternative specifications.
     + 02_regmods.R - Estimates the effect of black political representation on incarceration and police rates via a variety of autoregressive distributed lag (ADL) models. 
