@@ -72,7 +72,8 @@ matchme(vector,string)
 #read in data on all members
 setwd(datadir); dir()
 membersdf<-fread(
-  'HSall_members.csv'
+  'HSall_members.csv',
+  encoding='UTF-8'
 )
 
 #names are stored w/ 1, 2 or 3 commas
@@ -113,9 +114,10 @@ membersdf$suffix<-sapply(members_names,function(x) {
 
 #these are black congressmen
 setwd(datadir); dir()
-cbcdf<-read.csv(
+cbcdf<-fread(
   'congressmen_list.csv',
-  stringsAsFactors=F
+  stringsAsFactors=F,
+  encoding='UTF-8'
 )
 names(cbcdf)<-c(
   "congress",
@@ -471,7 +473,8 @@ table(membersdf$black)
 #########################################################
 #########################################################
 
-# #this shows where
+#DEPRECATED
+# #this shows where they are in space
 # membersdf$black<-factor(membersdf$black)
 # tmpcolors<-c("grey","black")
 # names(tmpcolors)<-levels(membersdf$black)
@@ -489,6 +492,10 @@ table(membersdf$black)
 #   scale_color_manual(
 #     values=tmpcolors
 #   )
+
+#########################################################
+#########################################################
+
 
 setwd(filesdir); dir()
 write.csv(

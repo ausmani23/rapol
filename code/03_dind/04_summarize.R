@@ -200,10 +200,9 @@ fill.labels<-c(
 #########################################################
 #########################################################
 
-#FIG 1 - PREFERRED ESTS
+#FIG 7 - PREFERRED ESTS
 
 #get preferred ests
-#(8/23 update: relegating ADLs to appendix)
 
 tmp<-finaldf$dv%in%c(
   'imprt_t_jur',
@@ -294,19 +293,20 @@ g.tmp<-ggplot(
   theme_bw()
 
 setwd(outputdir)
-tmpname<-"fig_dind_prefests.png"
+tmpname<-"fig7_dind_prefests.pdf"
 ggsave(
   plot=g.tmp,
   tmpname,
-  width=8,
-  height=2.5
+  width=6,
+  height=2
 )
 output(plotdf,tmpname)
 plotdf
+
 #########################################################
 #########################################################
 
-#FIG 2 - WELFARE BENEFITS
+#FIG X - WELFARE BENEFITS
 
 #also export welfbenefits
 tmp<-finaldf$dv=="welfbenefits" &
@@ -400,7 +400,7 @@ plotdf[plotdf$mu<0,]
 #########################################################
 #########################################################
 
-#FIG 3 - ROBUST ESTS
+#FIG X - ROBUST ESTS
 
 setwd(metadir); dir()
 tmpdf<-read.csv(

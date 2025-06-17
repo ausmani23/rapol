@@ -32,7 +32,6 @@ votesdf<-read.csv(
   stringsAsFactors=F
 )
 
-
 votesdf$housevote<-tolower(votesdf$housevote)
 
 votesdf$billid<-paste(
@@ -148,6 +147,7 @@ votesdf<-merge(
 #########################################################
 
 #load all votes from JSON file
+#these are from https://voteview.com
 setwd(datadir)
 allvotesdf<-fread(
   "HSall_rollcalls_withissues.csv",

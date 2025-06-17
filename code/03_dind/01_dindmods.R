@@ -71,8 +71,6 @@ treated<-c("AL","FL","GA","LA","MS","NC","SC","TX","VA","NY")
 beodf$t<-as.numeric(beodf$state_alpha2%in%treated)
 beodf$t.post.t<-beodf$t * beodf$post.t
 
-#eubanks and fresh ideniti
-
 #we can also interact the treatment variables by 
 #the magnitude of the treatment effect, 
 #which will be the number of new districts created
@@ -395,6 +393,7 @@ ddsamps<-lapply(tmpseq.i,function(i) {
     tmprows<-tmprows & 
       beodf$statename%in%c(
         ##mulroy and katzenlson, p. 606
+        #(following Eubanks/Fresh..)
         'Missouri',
         'Arkansas',
         'Louisiana',
@@ -719,7 +718,6 @@ ddfinaldf$musd.min<-ddfinaldf$mu.min/ddfinaldf$dvsd
 
 #save out
 setwd(filesdir)
-#save.image('ddmods.RData')
 write.csv(
   ddfinaldf,
   '03_dind_resultsdf.csv',

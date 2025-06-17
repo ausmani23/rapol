@@ -154,7 +154,8 @@ require(grid)
 #########################################################
 #########################################################
 
-#PLOT AVERAGES
+#FIGURE 1 - AVERAGE RESPONSES
+
 tmp<-avgdf$race%in%c(1,2)
 plotdf<-avgdf[tmp,]
 
@@ -256,26 +257,26 @@ g.tmp<- ggplot(
     space='free_y'
   ) +
   theme_bw(
-    #base_family="CM Roman",
     base_size=14
   ) +
   theme(legend.position="top") +
-  #theme(axis.text.y=element_text(face=tmpface)) +
   theme(axis.text.y=element_text(size=8))
 
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
-  filename='fig_po_averages.png',
+  filename='fig1_po_averages.pdf',
   width=6,
-  height=9
+  height=9,
+  dpi=300
 )
 
 
 #########################################################
 #########################################################
 
-#PLOT DIFFERENCES
+#FIG X - DIFFERENCES
+
 # #aux plot will take difftype avg
 # tmp<-diffdf$difftype=="avg"
 # auxplotdf<-diffdf[tmp,]
@@ -418,10 +419,11 @@ ggsave(
 #########################################################
 #########################################################
 
+#ROOT CAUSE RESPONSES
+
 #extras
 require(boot)
 
-#EXAMINE ROOT CAUSES
 #load data again
 setwd(filesdir); dir()
 finaldf<-fread(

@@ -347,13 +347,14 @@ g.tmp<- ggplot(
     legend.text = element_text(size=8)
   )
 
-tmpname<-"fig_po_correlations.png"
+tmpname<-"fig4_po_correlations.pdf"
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
   filename=tmpname,
   width=10,
-  height=6
+  height=6,
+  dpi=300
 )
 output(plotdf,tmpname)
 

@@ -125,7 +125,8 @@ tmp <- allvotesdf$date>ymd('2001-09-11') &
     (str_detect(allvotesdf$vote_desc,'terror') & 
        !is.na(allvotesdf$vote_desc))
   ) 
-#there are only 8 of these, no way they make a difference
+#there are only 8 of these, 
+#not likely to make a difference
 
 #########################################################
 #########################################################

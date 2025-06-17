@@ -167,8 +167,9 @@ loopdf<-expand.grid(
     'mistrust'
   )
 )
-#quick function to help generate conventional expectations
-setwd(codedir); source('genconventional.R')
+
+# #quick function to help generate conventional expectations
+# setwd(codedir); source('genconventional.R')
 
 # tmpseq.i<-1:nrow(loopdf)
 # tmpdf<-lapply(tmpseq.i,function(i) {
@@ -281,23 +282,24 @@ g.tmp<-ggplot(
     values=tmpcolors
   ) +
   facet_grid( 
-    dimension ~ facet
+    dimension ~ .
   ) +
   xlab("") +
-  ylab("P(Affirmative)\n") +
+  ylab("p(Affirmative)\n") +
   theme_bw() +
   theme(
-    legend.position='bottom',
+    legend.position='top',
     legend.direction='horizontal'
   ) 
 
 setwd(outputdir)
-tmpname<-"fig_po_trends.png"
+tmpname<-"fig2_po_trends.pdf"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
   width=4,
-  height=8
+  height=8,
+  dpi=300
 )
 output(plotdf,tmpname)
 
@@ -409,6 +411,9 @@ diffoutput<-lapply(tmpseq.i,function(i) {
   
 })
 
+#########################################################
+
+#FIG X's - DIFFERENCES
 #plot bw difference
 plotdf<-lapply(diffoutput,function(x) x$bwdf) %>% rbind.fill
 plotdf<-plotdf[plotdf$type=='loess',]

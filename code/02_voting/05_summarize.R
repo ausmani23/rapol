@@ -85,17 +85,18 @@ mvotesdf$group[tmp]<-paste0('Non-Black ',mvotesdf$group[tmp])
 #########################################################
 #########################################################
 
-#SUMMARIZE BY PRESIDENT
+#FIG X - SUMMARIZE BY PRESIDENT
 
 #merge info about presidents into this, for display
 require(rvest)
 require(lubridate)
-tmpurl <- "https://history.house.gov/Institution/Presidents-Coinciding/Presidents-Coinciding/"
-thishtml <- read_html(tmpurl)
-tmpdf<-thishtml %>%
-  html_nodes('.manual-table-not-sortable') %>%
-  html_table()
-tmpdf<-tmpdf[[1]]
+# tmpurl <- "https://history.house.gov/Institution/Presidents-Coinciding/Presidents-Coinciding/"
+# tmpdf<-thishtml %>%
+#   html_nodes('.manual-table-not-sortable') %>%
+#   html_table()
+# tmpdf<-tmpdf[[1]]
+# setwd(datadir); fwrite(tmpdf,'prezdf.csv')
+setwd(datadir); tmpdf<-fread('prezdf.csv')
 names(tmpdf)<-tolower(names(tmpdf))
 names(tmpdf)<-c('number','president','vp','years','congresses')
 tmpdf$number<-na.locf(tmpdf$number)
@@ -130,7 +131,7 @@ tmpdf<-lapply( 1:nrow(tmpdf),function(i) {
 }) %>% rbind.fill %>% data.table
 
 #keep only those that are in mvotesdf
-mvotesdf$date<-ymd(mvotesdf$date)
+mvotesdf$date<-lubridate::ymd(mvotesdf$date)
 mvotesdf<-merge(
   mvotesdf,
   tmpdf,
@@ -288,13 +289,13 @@ diffdf<-by(sumdf,sumdf$year,function(df) {
 #########################################################
 #########################################################
 
-#PLTO THE AVERAGE
+#FIG 5 - SUMMARY OF LEVELS
 
-#load
-setwd(codedir); source('genconventional.R')
+# #load
+# setwd(codedir); source('genconventional.R')
 
 plotdf<-sumdf
-plotdf$facet<-"estimated"
+#plotdf$facet<-"estimated"
 plotdf$yhat<-plotdf$mu.loess
 
 # #add conventional view
@@ -352,24 +353,24 @@ plotdf$yhat<-plotdf$mu.loess
 # tmpdf$facet<-"conventional"
 
 
-plotdf<-rbind.fill(
-  plotdf,
-  tmpdf
-)
+# plotdf<-rbind.fill(
+#   plotdf,
+#   tmpdf
+# )
 
-tmplevels<-c(
-  "conventional",
-  "estimated"
-)
-tmplabels<-c(
-  "Conventional View",
-  "Estimated"
-)
-plotdf$facet<-factor(
-  plotdf$facet,
-  tmplevels,
-  tmplabels
-)
+# tmplevels<-c(
+#   "conventional",
+#   "estimated"
+# )
+# tmplabels<-c(
+#   "Conventional View",
+#   "Estimated"
+# )
+# plotdf$facet<-factor(
+#   plotdf$facet,
+#   tmplevels,
+#   tmplabels
+# )
 
 tmplevels<-c(
   "Non-Black Democrats",
@@ -393,34 +394,17 @@ g.tmp<-ggplot(
   aes(
     x=year,
     y=mu.loess,
-    #ymin=mu.loess - 1.96*se.loess,
-    #ymax=mu.loess + 1.96*se.loess,
     group=group,
     color=group
   )
 ) +
   geom_line(size=1) +
-  # geom_ribbon(
-  #   alpha=0.25,
-  #   color='grey'
-  # ) +
-  # geom_point(
-  #   data=sumdf2,
-  #   aes(
-  #     y=punitive_pct
-  #   ),
-  #   alpha=0.25
-  # ) +
-scale_color_manual(
-  name="",
-  values=tmpcolors
-) +
+  scale_color_manual(
+    name="",
+    values=tmpcolors
+  ) +
   xlab("") +
   ylab("% Voting Punitive\n") +
-  # facet_wrap(
-  #   ~ facet,
-  #   ncol=1
-  # ) +
   theme_bw() +
   theme(
     legend.position = 'bottom',
@@ -428,20 +412,20 @@ scale_color_manual(
   )
 
 setwd(outputdir)
-tmpname<-"fig_voting_levels.png"
+tmpname<-"fig5_voting_levels.pdf"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
   width=5,
-  height=5
+  height=5,
+  dpi=300
 )
 output(plotdf,tmpname)
 
-
 #########################################################
 #########################################################
 
-#PLOT THE DIFFERENCE
+#FIG X - PLOT THE DIFFERENCES
 
 plotdf<-diffdf
 
@@ -512,16 +496,17 @@ output(plotdf,tmpname)
 #########################################################
 #########################################################
 
-#SPLIT SOUTH FROM NON-SOUTH
-#focusing just on non-black
-
+#FIG 6 - SOUTH VS. NON-SOUTH 
 
 #split the sample by 1964 eleciton returns
 #goldwater states, all other states, very liberal states
 require(rvest)
-tmpurl<-'https://en.wikipedia.org/wiki/1964_United_States_presidential_election'
-myhtml <- read_html(tmpurl) %>% html_nodes('table')
-tmpdf <- myhtml[[15]] %>% html_table
+#scraped on 6/17/2025
+# tmpurl<-'https://en.wikipedia.org/wiki/1964_United_States_presidential_election'
+# myhtml <- read_html(tmpurl) %>% html_nodes('table')
+# tmpdf <- myhtml[[19]] %>% html_table
+# setwd(datadir); fwrite(tmpdf,'lbj1964.csv')
+setwd(datadir); tmpdf <- fread('lbj1964.csv')
 tmpdf <- tmpdf[-(1),c(1,15)] #this is the margin in favor of LBJ
 names(tmpdf)<-c('statename','lbjmargin')
 tmpdf$lbjmargin<-str_replace_all(tmpdf$lbjmargin,"\\,","")
@@ -624,12 +609,13 @@ g.tmp <- ggplot(
   )
 
 setwd(outputdir)
-tmpname<-"fig_voting_levels_south.png"
+tmpname<-"fig6_voting_levels_south.pdf"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
-  width=4,
-  height=4
+  width=4*1.25,
+  height=4*1.25,
+  dpi=300
 )
 output(plotdf,tmpname)
 
@@ -641,9 +627,11 @@ tmpdf<-spread(
 )
 tmpdf$diff <- tmpdf$Goldwater - tmpdf$`LBJ (Top 5)`
 tmpdf$diff
-goldwater_increase <- (tmpdf$Goldwater[tmpdf$year==2018] - tmpdf$Goldwater[tmpdf$year==1960])/
+goldwater_increase <- 
+  (tmpdf$Goldwater[tmpdf$year==2018] - tmpdf$Goldwater[tmpdf$year==1960])/
   tmpdf$Goldwater[tmpdf$year==1960] #105% increase
-lbj_increase <- (tmpdf$`LBJ (Top 5)`[tmpdf$year==2018] - tmpdf$`LBJ (Top 5)`[tmpdf$year==1960])/
+lbj_increase <- 
+  (tmpdf$`LBJ (Top 5)`[tmpdf$year==2018] - tmpdf$`LBJ (Top 5)`[tmpdf$year==1960])/
   tmpdf$`LBJ (Top 5)`[tmpdf$year==1960] #84% increase
 lbj_increase/goldwater_increase #80% of the goldwater increase happens in the lbj case, too
 

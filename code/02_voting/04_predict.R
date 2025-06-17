@@ -63,8 +63,6 @@ mvotesdf$punitive<-as.numeric(mvotesdf$punitive)
 #########################################################
 #########################################################
 
-#METHOD 1
-
 #let's use data we have to build prediction
 mvotesdf
 

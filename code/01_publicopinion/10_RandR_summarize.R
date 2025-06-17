@@ -683,9 +683,8 @@ rawdf <- finaldf[
   )
 ]
 
-#########################################################
+#FIG 3 - AVERAGES
 
-#AVERAGES
 plotdf <- rawdf[
   ,
   summarize.distribution3(mu)
@@ -804,9 +803,10 @@ g.tmp <- ggplot(
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
-  filename='fig_po_averages_elites.png',
+  filename='fig3_po_averages_elites.pdf',
   width=6,
-  height=8
+  height=8,
+  dpi=300
 )
 
 #########################################################
