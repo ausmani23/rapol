@@ -1,6 +1,6 @@
 # The Racial Politics of Mass Incarceration
 
-This repository contains replication code for 'The Racial Politics of Mass Incarceration'. 
+[This repository](https://github.com/ausmani23/rapol) contains replication code for 'The Racial Politics of Mass Incarceration'. 
 
 To replicate results, you will need to create three additional folders. 
 
