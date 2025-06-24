@@ -265,7 +265,14 @@ g.tmp<- ggplot(
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
-  filename='fig1_po_averages.pdf',
+  filename='fig_po_averages.png',
+  width=6,
+  height=9,
+  dpi=300
+)
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig1.pdf',
   width=6,
   height=9,
   dpi=300

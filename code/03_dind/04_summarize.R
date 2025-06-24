@@ -293,7 +293,7 @@ g.tmp<-ggplot(
   theme_bw()
 
 setwd(outputdir)
-tmpname<-"fig7_dind_prefests.pdf"
+tmpname<-"fig_dind_prefests.png"
 ggsave(
   plot=g.tmp,
   tmpname,
@@ -301,7 +301,12 @@ ggsave(
   height=2
 )
 output(plotdf,tmpname)
-plotdf
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig7.pdf',
+  width=6,
+  height=2
+)
 
 #########################################################
 #########################################################

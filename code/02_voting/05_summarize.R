@@ -398,7 +398,7 @@ g.tmp<-ggplot(
     color=group
   )
 ) +
-  geom_line(size=1) +
+  geom_line(linewidth=1) +
   scale_color_manual(
     name="",
     values=tmpcolors
@@ -412,7 +412,7 @@ g.tmp<-ggplot(
   )
 
 setwd(outputdir)
-tmpname<-"fig5_voting_levels.pdf"
+tmpname<-"fig_voting_levels.png"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
@@ -421,6 +421,14 @@ ggsave(
   dpi=300
 )
 output(plotdf,tmpname)
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig5.pdf',
+  width=5,
+  height=5,
+  dpi=300
+)
+
 
 #########################################################
 #########################################################
@@ -609,7 +617,7 @@ g.tmp <- ggplot(
   )
 
 setwd(outputdir)
-tmpname<-"fig6_voting_levels_south.pdf"
+tmpname<-"fig_voting_levels_south.png"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
@@ -618,6 +626,13 @@ ggsave(
   dpi=300
 )
 output(plotdf,tmpname)
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig6.pdf',
+  width=4*1.25,
+  height=4*1.25,
+  dpi=300
+)
 
 #for calculations
 tmpdf<-spread(

@@ -293,7 +293,7 @@ g.tmp<-ggplot(
   ) 
 
 setwd(outputdir)
-tmpname<-"fig2_po_trends.pdf"
+tmpname<-"fig_po_trends.png"
 ggsave(
   plot=g.tmp,
   filename=tmpname,
@@ -302,6 +302,13 @@ ggsave(
   dpi=300
 )
 output(plotdf,tmpname)
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig2.pdf',
+  width=4,
+  height=8,
+  dpi=300
+)
 
 #key points
 plotdf[race=='Black' & dimension=='Punitiveness' & year%in%c(1957,1989)]

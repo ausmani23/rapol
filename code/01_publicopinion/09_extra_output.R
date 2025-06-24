@@ -347,16 +347,23 @@ g.tmp<- ggplot(
     legend.text = element_text(size=8)
   )
 
-tmpname<-"fig4_po_correlations.pdf"
+tmpname<-"fig_po_correlations.png"
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
   filename=tmpname,
-  width=10,
-  height=6,
+  width=10/1.5,
+  height=6/1.5,
   dpi=300
 )
 output(plotdf,tmpname)
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig4.pdf',
+  width=10/1.5,
+  height=6/1.5,
+  dpi=300
+)
 
 #how long is lag between protests/riots peak
 #and  punitiveness peak

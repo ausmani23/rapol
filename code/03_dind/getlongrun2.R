@@ -5,7 +5,8 @@ getlongrun2<-function(
   vcov,
   dv,
   iv,
-  ivsd
+  ivsd,
+  reps=1000
 ) {
   ####
   # m<-m.tmp

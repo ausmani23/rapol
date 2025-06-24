@@ -25,6 +25,7 @@ source('dirs.R')
 #########################################################
 
 #LOAD HAND-CODED VOTES
+#source: our own hand-coding of punitive votes
 
 setwd(datadir); dir()
 votesdf<-read.csv(

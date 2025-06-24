@@ -803,7 +803,14 @@ g.tmp <- ggplot(
 setwd(outputdir)
 ggsave(
   plot=g.tmp,
-  filename='fig3_po_averages_elites.pdf',
+  filename='fig_po_averages_elites.png',
+  width=6,
+  height=8,
+  dpi=300
+)
+ggsave(
+  plot=g.tmp,
+  filename='CleggFig3.pdf',
   width=6,
   height=8,
   dpi=300

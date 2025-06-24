@@ -23,13 +23,13 @@ Numbers indicate that files must be run in a particular order. To run everything
     + 01_group.R - Combines polling datasets
     + 02_prep.R - Recodes combined dataset
     + 03_summarize.R - Summarizes average responses by race and average black-white differences 
-    + 04_summarize_output.R - Illustrates the output of 10_summarize.R
+    + 04_summarize_output.R - Illustrates the output of 10_summarize.R. Generates Figure 1
     + 05_regmods.R - Estimates generalized linear mixed-effects models on the probability of a positive response to questions in each of the three dimensions
     + 06_regmods_output.R - Illustrates the marginal (adjusted) effect of race on p(anxious), p(mistrustful), p(punitive)
     + 07_predict.R - Combines estimates from the multilevel models with Census population data to generate predictions for each demographic cell between 1956 and 2014 
-    + 08_predict_output.R - Summarizes race-specific trends over time (with and without confidence intervals) and the black-white gap (with confidence interval).
-    + 09_extra_output.R - Illustrates that trends in punitiveness fit trends in crime rather than trends in civil rights activity or riots
-	+ 10_RandR_summarize.R - Illustrates robustness of descriptive inference to including/excluding respondents who gave neutral or hard-to-classify answers
+    + 08_predict_output.R - Summarizes race-specific trends over time (with and without confidence intervals) and the black-white gap (with confidence interval). Generates Figure 2
+    + 09_extra_output.R - Illustrates that trends in punitiveness fit trends in crime rather than trends in civil rights activity or riots. Generates Figure 4
+	+ 10_RandR_summarize.R - Illustrates robustness of descriptive inference to including/excluding respondents who gave neutral or hard-to-classify answers. Generates Figure 3
 	+ 11_RandR_model.R - Runs sparser models
 	+ 12_RandR_modeloutput.R - Illustrates robustness of inferences about trends to using sparser models
     + functions.R - Contains misc functions used in the scripts
@@ -42,14 +42,14 @@ Numbers indicate that files must be run in a particular order. To run everything
     + 02_matcheos.R - Loads a dataset with information about all congressmen, merges this with a dataset on black members of congress
     + 03_merge.R - Merges the votes, members, and a members-votes dataset together
     + 04_predict.R - Trains a model using the average DW-Nominate scores of those voting 'yes' and 'no' in the hand-coded bills to predict the direction of a punitive vote in the not-hand-coded bills
-    + 05_summarize.R - Summarizes levels and differences in punitive voting in the house
+    + 05_summarize.R - Summarizes levels and differences in punitive voting in the house. Generates Figures 5 and 6
     
 + 'code/03_dind' contains the code to generate the figures and results which correspond to Section 5
 
     + 01_dindmods.R - Estimates the effect of federally-mandated redistricting on incarceration and police rates. Runs preferred specifications and a variety of alternative specifications.
     + 02_regmods.R - Estimates the effect of black political representation on incarceration and police rates via a variety of autoregressive distributed lag (ADL) models. 
     + 03_regmods_robustness.R - Estimates a variety of alternative specifications of the ADL models.
-    + 04_summarize.R - Illustrates the rise in black representation. Summarizes estimates from preferred models, from both approaches. Illustrates the robustness (or lack of robustness) of the main conclusions to alternative specifications.
+    + 04_summarize.R - Illustrates the rise in black representation. Summarizes estimates from preferred models, from both approaches. Illustrates the robustness (or lack of robustness) of the main conclusions to alternative specifications. Generates Figure 7.
     
 + 'meta' contains files that carry metadata which is more convenient to store in spreadsheet form than in an .R script
 

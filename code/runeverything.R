@@ -5,22 +5,7 @@ require(rprojroot)
 rootdir <- find_root(criterion = has_file('_rapol.RProj'))
 codedir <- file.path(rootdir, "code")
 setwd(codedir); dir()
-source('dirs.R')                        
-
-## open log file to record all console output
-tmpname <- paste0(
-  'runeverything_',
-  format(Sys.Date(), "%y%m%d"),
-  '.log'
-)
-log_con <- file(
-  file.path(
-    outputdir, 
-    tmpname,
-    ), 
-  open = "wt"
-)
-sink(log_con, type = "output", split = TRUE)   
+source('dirs.R')    
 
 #helper functions
 msg_tee <- function(m) {
@@ -37,6 +22,21 @@ warn_tee <- function(w) {
   )
 }
 
+## open log file to record all console output
+tmpname <- paste0(
+  'runeverything_',
+  format(Sys.Date(), "%y%m%d"),
+  '.log'
+)
+log_con <- file(
+  file.path(
+    outputdir, 
+    tmpname
+    ), 
+  open = "wt"
+)
+sink(log_con, type = "output", split = TRUE)   
+
 ## run public-opinion scripts (Section 3)
 setwd(pcodedir); dir()
 myfiles <- dir()[str_detect(dir(), '^[0-9]{2}')]
@@ -44,7 +44,7 @@ for (myfile in myfiles) {
   print("######")
   print("Running:")
   print(myfile)
-  
+
   pcodedir <- file.path(
     find_root(criterion = has_file('_rapol.RProj')),
     "code", "01_publicopinion"
@@ -92,7 +92,6 @@ for (myfile in myfiles) {
 ## run d-in-d scripts (Section 5)
 setwd(dcodedir); dir()
 myfiles <- dir()[str_detect(dir(), '^[0-9]{2}')]
-#myfiles <- dir()[1:3]
 for (myfile in myfiles) {
   print("######")
   print("Running:")

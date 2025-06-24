@@ -35,6 +35,7 @@ nrow(unique(allvotesdf))==nrow(allvotesdf)
 
 #MEMBER-VOTES
 #read in member-vote database
+#this is also from voteview
 setwd(datadir); dir()
 mvotesdf<-fread(
   'Hall_votes.csv'
@@ -120,7 +121,7 @@ nrow(unique(mvotesdf))==nrow(mvotesdf)
 #########################################################
 
 #classify WoT votes
-tmp <- allvotesdf$date>ymd('2001-09-11') & 
+tmp <- allvotesdf$date>lubridate::ymd('2001-09-11') & 
   (
     (str_detect(allvotesdf$vote_desc,'terror') & 
        !is.na(allvotesdf$vote_desc))

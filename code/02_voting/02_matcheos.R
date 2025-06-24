@@ -70,6 +70,7 @@ matchme(vector,string)
 #########################################################
 
 #read in data on all members
+#source: https://voteview.com/articles/data_help_members
 setwd(datadir); dir()
 membersdf<-fread(
   'HSall_members.csv',
@@ -113,6 +114,8 @@ membersdf$suffix<-sapply(members_names,function(x) {
 #IDENTIFY RACE OF EO'S
 
 #these are black congressmen
+#source: https://history.house.gov/Exhibitions-and-Publications/BAIC/Historical-Data/Black-American-Representatives-and-Senators-by-Congress/
+
 setwd(datadir); dir()
 cbcdf<-fread(
   'congressmen_list.csv',
