@@ -98,27 +98,31 @@ votesdf$date<-lubridate::ymd(votesdf$date)
 votesdf$congress<-votesdf$session
 votesdf$session<-NULL
 
-#we need bill number
-#this we can get from the topline 
-#of the congress votes data that we downloaded
-tmpdir<-file.path(
-  datadir,
-  "votes"
-); setwd(tmpdir)
-tmpseq.i<-seq_along(dir())
-metadf<-lapply(tmpseq.i,function(i) {
-  x<-dir()[i]
-  tmp<-readLines(
-    x,n=1
-  )
-  bill_name<-str_extract(tmp,"(H\\.\\sR\\.|H\\.Res\\.|H\\.R\\.|H\\sR|HR|S\\.)\\s[0-9]+") %>%
-    tolower
-  data.frame(
-    filename=dir()[i],
-    bill_name,
-    stringsAsFactors=F
-  )
-}) %>% rbind.fill
+#COMMENTED OUT FOR REPLICATION
+#(no need to upload all these .csv's to dataverse)
+# #we need bill number
+# #this we can get from the topline 
+# #of the congress votes data that we downloaded
+# tmpdir<-file.path(
+#   datadir,
+#   "votes"
+# ); setwd(tmpdir)
+# tmpseq.i<-seq_along(dir())
+# metadf<-lapply(tmpseq.i,function(i) {
+#   x<-dir()[i]
+#   tmp<-readLines(
+#     x,n=1
+#   )
+#   bill_name<-str_extract(tmp,"(H\\.\\sR\\.|H\\.Res\\.|H\\.R\\.|H\\sR|HR|S\\.)\\s[0-9]+") %>%
+#     tolower
+#   data.frame(
+#     filename=dir()[i],
+#     bill_name,
+#     stringsAsFactors=F
+#   )
+# }) %>% rbind.fill
+# setwd(datadir); fwrite(metadf,'02_handcodedmeta.csv')
+setwd(datadir); metadf<-fread('02_handcodedmeta.csv')
 
 #extract what you need to merge votesdf
 metadf$billid<-str_extract(
